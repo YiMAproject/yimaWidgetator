@@ -1,0 +1,7 @@
+<div class="row" >
+    <?php echo $this->layout()->widgets; ?>
+</div>
+
+<br/><br/>
+<?php $this->ajaxyWidget('ezWidget', 'callMethod', 'domElementID');?>
+<div class="row" id="domElementID" ></div>
