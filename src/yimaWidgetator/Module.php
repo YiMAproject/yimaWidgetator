@@ -14,8 +14,8 @@ class Module
 
     public function init(ModuleManagerInterface $moduleManager)
     {
-        // cWidget need cjQuery and it will be loaded
-        $moduleManager->loadModule('cjQuery');
+        // yimaWidgetator need yimajQuery and it will be loaded
+        $moduleManager->loadModule('yimaJquery');
 
         // Check that yimaWidgetator used as listener option or not {
         $sm = $moduleManager->getEvent()->getParam('ServiceManager');
