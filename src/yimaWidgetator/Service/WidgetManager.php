@@ -99,17 +99,28 @@ class WidgetManager extends AbstractPluginManager
      */
     public function injectWidgetDependencies(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
     {
-        /*$parentLocator = $serviceLocator->getServiceLocator();
+        /** @var $serviceLocator \yimaWidgetator\Service\WidgetManager */
 
-        if ($widget instanceof ServiceLocatorAwareInterface) {
-            $widget->setServiceLocator($parentLocator->get('Zend\ServiceManager\ServiceLocatorInterface'));
+        /*if ($widget instanceof ThatInterface) {
+            // do something with .... $widget
         }*/
     }
 
+    /**
+     * Store widget as service in serviceLocator
+     *
+     * @param AbstractWidget          $widget
+     * @param ServiceLocatorInterface $serviceLocator
+     *
+     * @return $this
+     */
     public function setWidgetAsService(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
     {
-        $uid = $widget->getID();
+        /** @var $serviceLocator \yimaWidgetator\Service\WidgetManager */
 
+        $uid = $widget->getID();
         $serviceLocator->setService($uid, $widget);
+
+        return $this;
     }
 }

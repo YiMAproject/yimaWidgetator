@@ -351,7 +351,8 @@ class AbstractWidget extends AbstractOptions implements
 	
 	protected function injectChildsToViewModel(ViewModel $viewModel)
 	{
-		$widgetLoader = $this->getServiceLocator()->get('WidgetLoader'); 
+		$widgetLoader = $this->getServiceLocator();
+
 		foreach ($this->nested as $nest) {
 			$widget = $nest['class'];
 			if (is_string($widget)) {
