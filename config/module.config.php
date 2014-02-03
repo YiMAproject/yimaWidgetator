@@ -1,11 +1,11 @@
 <?php
 return array(
-	'yimaWidgetator' => array(
+	'yima_widgetator' => array(
+        /*
+         * This is configurable service manager config
+         */
 		'invokables' => array(
-			'Navigation\Menu' => 'yimaWidgetator\Widget\NavigationMenu\Widget',
-
-			'ezWidget' => 'yimaWidgetator\Widget\ezWidget\Widget',
-			'ezBorder' => 'yimaWidgetator\Widget\ezBorder\Widget',
+			// 'widgetName' => 'Widget\Class',
 		),
 	),
 
@@ -17,24 +17,12 @@ return array(
 
 	'controllers' => array(
 		'invokables' => array(
-			'yimaWidgetator\Controller\Index' => 'yimaWidgetator\Controller\IndexController',
             'yimaWidgetator\Controller\Rest'  => 'yimaWidgetator\Controller\WidgetLoadRestController'
 		),
 	),
 
     'router' => array(
         'routes' => array(
-            'yimaWidgetator_demo' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route'    => '/yimaWidgetator/demo',
-                    'defaults' => array(
-                        'controller' => 'yimaWidgetator\Controller\Index',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-
             'yimaWidgetator_restLoadWidget' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
@@ -46,5 +34,4 @@ return array(
             ),
         ),
     ),
-	
 );

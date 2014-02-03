@@ -59,11 +59,7 @@ class Module implements
 	{
         return array(
             'factories' => array(
-                'yimaWidgetator\WidgetLoader' => 'yimaWidgetator\Service\WidgetLoaderFactory',
-            ),
-            'aliases' => array (
-                'WidgetLoader' => 'yimaWidgetator\WidgetLoader',
-                'widget'       => 'widgetLoader',
+                'yimaWidgetator\WidgetManager' => 'yimaWidgetator\Service\WidgetManagerFactory',
             ),
         );
 	}

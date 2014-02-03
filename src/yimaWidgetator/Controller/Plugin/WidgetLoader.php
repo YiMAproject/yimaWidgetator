@@ -13,7 +13,7 @@ class WidgetLoader extends AbstractPlugin
 	/**
 	 * @var WidgetManager
 	 */
-	protected $widgetLoader;
+	protected $widgetManager;
 	
     /**
      * Invoke as a functor
@@ -21,40 +21,49 @@ class WidgetLoader extends AbstractPlugin
      * If no arguments are given, grabs WidgetLoader
      * Otherwise, attempts to get widget from WidgetLoader
      *
-     * @param  null|string $template
+     * @param null|string $widget  Registered service in WidgetManager
+     * @param array       $options Options for widget
+     *
      * @return Model|Layout
      */
-    public function __invoke($widget = null, $options = array() )
+    public function __invoke($widget = null, $options = array())
     {
    	 	if (null === $widget) {
-            return $this->getWidgetLoader();
+            return $this->getWidgetManager();
         }
         
         if (! is_array($options)) {
-        	throw new Exception\InvalidArgumentException(sprintf(
-    			'Options must be an associated array of "config"=>value you enter %s',
-    			gettype($options)
-    		));
+        	throw new Exception\InvalidArgumentException(
+                sprintf(
+    			    'Options must be an associated array of "config" => value you enter %s',
+    			    gettype($options)
+    		    )
+            );
         }
         
-        return $this->getWidgetLoader()->get($widget, $options);
+        return $this->getWidgetManager()->get($widget, $options);
     }
-    
-    public function getWidgetLoader()
+
+    /**
+     * Get Widget Manager
+     *
+     * @return array|object|WidgetManager
+     *
+     * @throws \Exception
+     */
+    public function getWidgetManager()
     {
-    	if (null !== $this->widgetLoader) {
-    		return $this->widgetLoader;
+    	if ($this->widgetManager == null) {
+            $controller = $this->getController();
+            if (! $controller instanceof ServiceLocatorAwareInterface) {
+                throw new \Exception('yimaWidgetator plugin requires a controller that implements ServiceLocatorAwareInterface');
+            }
+
+            $serviceLocator      = $controller->getServiceLocator();
+            $this->widgetManager = $serviceLocator->get('yimaWidgetator\WidgetManager');
     	}
-    	
-    	$controller = $this->getController();
-    	if (! $controller instanceof ServiceLocatorAwareInterface) {
-    		throw new \Exception('yimaWidgetator plugin requires a controller that implements ServiceLocatorAwareInterface');
-    	}
-    	
-    	$serviceLocator     = $controller->getServiceLocator();
-    	$this->widgetLoader = $serviceLocator->get('WidgetLoader');
-    	 
-    	return $this->widgetLoader;
+
+    	return $this->widgetManager;
     }
 
 }

@@ -9,12 +9,13 @@ use yimaWidgetator\Exception;
 /**
  * @category   yimaWidgetator
  */
-class WidgetLoader extends AbstractHelper implements ServiceLocatorAwareInterface
+class WidgetLoader extends AbstractHelper
+    implements ServiceLocatorAwareInterface
 {
 	/**
 	 * @var WidgetManager
 	 */
-	protected $widgetLoader;
+	protected $widgetManager;
 	
     /**
      * Invoke as a functor
@@ -28,7 +29,7 @@ class WidgetLoader extends AbstractHelper implements ServiceLocatorAwareInterfac
     public function __invoke($widget = null, $options = array() )
     {
         if (null === $widget) {
-            return $this->getWidgetLoader();
+            return $this->getWidgetManager();
         }
         
         if (! is_array($options)) {
@@ -38,19 +39,22 @@ class WidgetLoader extends AbstractHelper implements ServiceLocatorAwareInterfac
     		));
         }
         
-        return $this->getWidgetLoader()->get($widget, $options);
+        return $this->getWidgetManager()->get($widget, $options);
     }
-    
-    protected function getWidgetLoader()
+
+    /**
+     * Get Widget Manager
+     *
+     * @return WidgetManager
+     */
+    protected function getWidgetManager()
     {
-    	if (null !== $this->widgetLoader) {
-    		return $this->widgetLoader;
+    	if ($this->widgetManager == null) {
+            $serviceLocator      = $this->getServiceLocator();
+            $this->widgetManager = $serviceLocator->get('yimaWidgetator\WidgetManager');
     	}
-    	
-    	$serviceLocator     = $this->getServiceLocator();
-    	$this->widgetLoader = $serviceLocator->get('WidgetLoader');
-    	
-    	return $this->widgetLoader;
+
+    	return $this->widgetManager;
     }
     
 
@@ -63,6 +67,7 @@ class WidgetLoader extends AbstractHelper implements ServiceLocatorAwareInterfac
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
+
         return $this;
     }
 
@@ -77,5 +82,4 @@ class WidgetLoader extends AbstractHelper implements ServiceLocatorAwareInterfac
         
         return $parentLocator; 
     }
-
 }

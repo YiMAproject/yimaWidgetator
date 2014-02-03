@@ -1,12 +1,9 @@
 <?php
-namespace yimaWidgetator;
+namespace yimaWidgetator\Service;
 
 use yimaWidgetator\AbstractWidget;
-use yimaWidgetator\Exception;
-
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 
@@ -19,6 +16,8 @@ class WidgetManager extends AbstractPluginManager
 {
     /**
      * We do not want arbitrary classes instantiated as widgets.
+     *
+     * note: if true will add service if class equal to service name exists
      *
      * @var bool
      */
@@ -46,10 +45,11 @@ class WidgetManager extends AbstractPluginManager
         
         // Pushing to bottom of stack to ensure this is done last ------ V
         
-		$this->addInitializer ( array ($this, 'injectWidgetDependencies' ), false );
+		$this->addInitializer(array($this, 'injectWidgetDependencies'), false);
+
 		// maa har widget ro ke id unique daarad ro mojadad zakhire mikonim be
 		// in tartib bar asaase id dobaare ghaabele faraakhaanist
-		$this->addInitializer ( array ($this, 'setWidgetAsService' ), false );
+		$this->addInitializer(array($this, 'setWidgetAsService'), false);
     }
     
     /**
@@ -58,8 +58,10 @@ class WidgetManager extends AbstractPluginManager
      * Ensure we have a widget.
      *
      * @param  mixed $plugin
+     *
      * @return true
-     * @throws Exception\InvalidControllerException
+     *
+     * @throws \Exception
      */
     public function validatePlugin($plugin)
     {
@@ -67,7 +69,7 @@ class WidgetManager extends AbstractPluginManager
     		return;
     	}
     
-    	throw new Exception\InvalidWidgetException(sprintf(
+    	throw new \Exception(sprintf(
     			'yimaWidgetator of type %s is invalid; must implement yimaWidgetator\AbstractWidget',
     			(is_object($plugin) ? get_class($plugin) : gettype($plugin))
     	));
@@ -77,8 +79,9 @@ class WidgetManager extends AbstractPluginManager
      * Override: do not use peering service manager to retrieve widgets
      *
      * @param  string $name
-     * @param  array $options
-     * @param  bool $usePeeringServiceManagers
+     * @param  array  $options
+     * @param  bool   $usePeeringServiceManagers
+     *
      * @return mixed
      */
     public function get($name, $options = array(), $usePeeringServiceManagers = false)
@@ -89,22 +92,24 @@ class WidgetManager extends AbstractPluginManager
     /**
      * Inject required dependencies into the widget.
      *
-     * @param  DispatchableInterface $controller
+     * @param  AbstractWidget          $widget
      * @param  ServiceLocatorInterface $serviceLocator
+     *
      * @return void
      */
-    public function injectWidgetDependencies($widget, ServiceLocatorInterface $serviceLocator)
+    public function injectWidgetDependencies(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
     {
-        $parentLocator = $serviceLocator->getServiceLocator();
+        /*$parentLocator = $serviceLocator->getServiceLocator();
 
         if ($widget instanceof ServiceLocatorAwareInterface) {
             $widget->setServiceLocator($parentLocator->get('Zend\ServiceManager\ServiceLocatorInterface'));
-        }
+        }*/
     }
 
-    public function setWidgetAsService($widget, ServiceLocatorInterface $serviceLocator) 
+    public function setWidgetAsService(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
     {
         $uid = $widget->getID();
-        $serviceLocator->setService ( $uid, $widget );
+
+        $serviceLocator->setService($uid, $widget);
     }
 }
