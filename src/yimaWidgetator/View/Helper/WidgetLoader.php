@@ -1,85 +1,46 @@
 <?php
 namespace yimaWidgetator\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use yimaWidgetator\Exception;
+use yimaWidgetator\Service\AbstractWidgetHelper;
+use Zend\View\Helper\HelperInterface;
+use Zend\View\Renderer\RendererInterface as Renderer;
 
 /**
- * @category   yimaWidgetator
+ * Class WidgetLoader
+ *
+ * @package yimaWidgetator\View\Helper
  */
-class WidgetLoader extends AbstractHelper
-    implements ServiceLocatorAwareInterface
+class WidgetLoader extends AbstractWidgetHelper
+    implements HelperInterface
 {
-	/**
-	 * @var WidgetManager
-	 */
-	protected $widgetManager;
-	
     /**
-     * Invoke as a functor
+     * View object instance
      *
-     * If no arguments are given, grabs WidgetLoader
-     * Otherwise, attempts to get widget from WidgetLoader
-     *
-     * @param  null|string $template
-     * @return Model|Layout
+     * @var Renderer
      */
-    public function __invoke($widget = null, $options = array() )
-    {
-        if (null === $widget) {
-            return $this->getWidgetManager();
-        }
-        
-        if (! is_array($options)) {
-        	throw new Exception\InvalidArgumentException(sprintf(
-    			'Options must be an associated array of "config"=>value you enter %s',
-    			gettype($options)
-    		));
-        }
-        
-        return $this->getWidgetManager()->get($widget, $options);
-    }
+    protected $view = null;
 
     /**
-     * Get Widget Manager
+     * Set the View object
      *
-     * @return WidgetManager
-     */
-    protected function getWidgetManager()
-    {
-    	if ($this->widgetManager == null) {
-            $serviceLocator      = $this->getServiceLocator();
-            $this->widgetManager = $serviceLocator->get('yimaWidgetator\WidgetManager');
-    	}
-
-    	return $this->widgetManager;
-    }
-    
-
-    /**
-     * Set the main service locator so factories can have access to it to pull deps
+     * @param  Renderer $view
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return AbstractPluginManager
+     * @return $this
      */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    public function setView(Renderer $view)
     {
-        $this->serviceLocator = $serviceLocator;
+        $this->view = $view;
 
         return $this;
     }
 
     /**
-     * Get the main plugin manager. Useful for fetching dependencies from within factories.
+     * Get the view object
      *
-     * @return mixed
+     * @return null|Renderer
      */
-    public function getServiceLocator()
+    public function getView()
     {
-    	$parentLocator = $this->serviceLocator->getServiceLocator();
-        
-        return $parentLocator; 
+        return $this->view;
     }
 }

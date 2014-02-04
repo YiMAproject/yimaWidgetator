@@ -27,9 +27,11 @@ class WidgetManagerFactory implements ServiceManager\FactoryInterface
         $config = new ServiceManager\Config($config); // to configure WidgetManager by configureServiceManager
 
         $widgetManager = new WidgetManager($config);
-        $widgetManager->setServiceLocator($serviceLocator);
-        //$widgetLoader->addPeeringServiceManager($serviceLocator); disabled, seems useless!!!
-        
+
+        /**
+         * ServiceLocator Injected into WidgetManager as is instanceof serviceLocatorInterface
+         */
+
         return $widgetManager;
     }
 }
