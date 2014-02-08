@@ -1,7 +1,6 @@
 <?php
 namespace yimaWidgetator\Service;
 
-use Zend\View\Helper\AbstractHelper;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -18,6 +17,11 @@ class AbstractWidgetHelper
 	 * @var WidgetManager
 	 */
 	protected $widgetManager;
+
+    /**
+     * @var ServiceLocatorInterface
+     */
+    protected $serviceLocator;
 	
     /**
      * Invoke as a functor
@@ -25,23 +29,17 @@ class AbstractWidgetHelper
      * If no arguments are given, grabs WidgetLoader
      * Otherwise, attempts to get widget from WidgetLoader
      *
-     * @param  null|string $template
-     * @return Model|Layout
+     * @param  null|string $widget
+     *
+     * @return mixed
      */
-    public function __invoke($widget = null, $options = array() )
+    public function __invoke($widget = null)
     {
         if (null === $widget) {
             return $this->getWidgetManager();
         }
         
-        if (! is_array($options)) {
-        	throw new Exception\InvalidArgumentException(sprintf(
-    			'Options must be an associated array of "config"=>value you enter %s',
-    			gettype($options)
-    		));
-        }
-        
-        return $this->getWidgetManager()->get($widget, $options);
+        return $this->getWidgetManager()->get($widget);
     }
 
     /**

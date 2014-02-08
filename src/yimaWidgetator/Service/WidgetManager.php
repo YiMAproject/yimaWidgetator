@@ -1,7 +1,8 @@
 <?php
 namespace yimaWidgetator\Service;
 
-use yimaWidgetator\AbstractWidget;
+use yimaWidgetator\Widget\MvcWidgetInterface;
+use yimaWidgetator\Widget\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -44,37 +45,9 @@ class WidgetManager extends AbstractPluginManager
         parent::__construct($configuration);
         
         // Pushing to bottom of stack to ensure this is done last ------ V
-        
 		$this->addInitializer(array($this, 'injectWidgetDependencies'), false);
+    }
 
-		// maa har widget ro ke id unique daarad ro mojadad zakhire mikonim be
-		// in tartib bar asaase id dobaare ghaabele faraakhaanist
-		$this->addInitializer(array($this, 'setWidgetAsService'), false);
-    }
-    
-    /**
-     * Validate the plugin
-     *
-     * Ensure we have a widget.
-     *
-     * @param  mixed $plugin
-     *
-     * @return true
-     *
-     * @throws \Exception
-     */
-    public function validatePlugin($plugin)
-    {
-    	if ($plugin instanceof AbstractWidget) {
-    		return;
-    	}
-    
-    	throw new \Exception(sprintf(
-    			'yimaWidgetator of type %s is invalid; must implement yimaWidgetator\AbstractWidget',
-    			(is_object($plugin) ? get_class($plugin) : gettype($plugin))
-    	));
-    }
-    
     /**
      * Override: do not use peering service manager to retrieve widgets
      *
@@ -86,41 +59,67 @@ class WidgetManager extends AbstractPluginManager
      */
     public function get($name, $options = array(), $usePeeringServiceManagers = false)
     {
-    	return parent::get($name, $options, $usePeeringServiceManagers);
+    	$return = parent::get($name, $options, $usePeeringServiceManagers);
+
+        return $return;
+    }
+
+    /**
+     * Validate the plugin
+     *
+     * Ensure we have a widget.
+     *
+     * @param  mixed $plugin
+     *
+     * @return true
+     * @throws \Exception
+     */
+    public function validatePlugin($plugin)
+    {
+        if ($plugin instanceof WidgetInterface) {
+
+            return true;
+        }
+
+        throw new \Exception(
+            sprintf(
+                'yimaWidgetator of type %s is invalid; must implement yimaWidgetator\Widget\WidgetInterface',
+                (is_object($plugin) ? get_class($plugin) : gettype($plugin))
+            )
+        );
     }
 
     /**
      * Inject required dependencies into the widget.
      *
-     * @param  AbstractWidget          $widget
+     * @param  WidgetInterface         $widget
      * @param  ServiceLocatorInterface $serviceLocator
      *
      * @return void
      */
-    public function injectWidgetDependencies(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
+    public function injectWidgetDependencies(WidgetInterface $widget, ServiceLocatorInterface $serviceLocator)
     {
         /** @var $serviceLocator \yimaWidgetator\Service\WidgetManager */
 
-        /*if ($widget instanceof ThatInterface) {
-            // do something with .... $widget
-        }*/
-    }
+        $sm = $serviceLocator->getServiceLocator();
+        if (!$sm) {
+            throw new \Exception('Service Manager can`t found.');
+        }
 
-    /**
-     * Store widget as service in serviceLocator
-     *
-     * @param AbstractWidget          $widget
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return $this
-     */
-    public function setWidgetAsService(AbstractWidget $widget, ServiceLocatorInterface $serviceLocator)
-    {
-        /** @var $serviceLocator \yimaWidgetator\Service\WidgetManager */
+        /**
+         * MVC Widget
+         */
+        if ($widget instanceof MvcWidgetInterface) {
+            if (! $sm->has('ViewRenderer')) {
+                throw new \Exception('ViewRenderer service not found on Service Manager.');
+            }
 
-        $uid = $widget->getID();
-        $serviceLocator->setService($uid, $widget);
+            $widget->setView($sm->get('ViewRenderer'));
+        }
 
-        return $this;
+        if ($widget instanceof InitializeFeatureInterface) {
+            // widget initialize himself after all
+            $widget->init();
+        }
     }
 }

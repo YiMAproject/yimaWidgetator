@@ -29,7 +29,7 @@ class WidgetManagerFactory implements ServiceManager\FactoryInterface
         $widgetManager = new WidgetManager($config);
 
         /**
-         * ServiceLocator Injected into WidgetManager as is instanceof serviceLocatorInterface
+         * ServiceLocator Injected into WidgetManager because of instanceof serviceLocatorInterface
          */
 
         return $widgetManager;
