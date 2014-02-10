@@ -9,15 +9,14 @@ return array(
 		),
 	),
 
-    'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
+    'static_uri_helper' => array(
+        'Yima.Widgetator.JS.Jquery.Ajaxq' => '{{basepath}}/yima-widgetator/js/jquery.ajaxq.min.js',
+        'Yima.Widgetator.JS.Jquery.Json'  => '{{basepath}}/yima-widgetator/js/jquery.json.min.js',
     ),
 
 	'controllers' => array(
 		'invokables' => array(
-            'yimaWidgetator\Controller\Rest'  => 'yimaWidgetator\Controller\WidgetLoadRestController'
+            'yimaWidgetator\Controller\Rest' => 'yimaWidgetator\Controller\WidgetLoadRestController'
 		),
 	),
 

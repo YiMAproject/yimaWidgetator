@@ -22,6 +22,7 @@
     "require": {
         "php": ">=5.3.3",
         "rayamedia/yima-jquery": "dev-master",
+        "rayamedia/yima-static-uri-helper": "dev-master",
         "rayamedia/yima-plugin-installer": "dev-master"
     },
     "extra": {

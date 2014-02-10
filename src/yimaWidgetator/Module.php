@@ -32,20 +32,16 @@ class Module implements
     public function init(ModuleManagerInterface $moduleManager)
     {
         /** @var $moduleManager \Zend\ModuleManager\ModuleManager */
+        $moduleManager->loadModule('yimaJquery');
 
-        try {
-            // yimaWidgetator need yimajQuery and it will be loaded.
-
-            $moduleManager->loadModule('yimaJquery');
-        }
-        catch(\Zend\ModuleManager\Exception\RuntimeException $e) {
-            if ($e->getMessage() == 'Module (yimaJquery) could not be initialized.') {
-                throw new \Exception(
-                    'yimaWidgetator Module need <a href="https://github.com/RayaMedia/yimaJquery.git">yimaJquery</a> module installed and enabled.'
-                );
-            }
-
-            throw $e;
+        //$moduleManager->loadModule('yimaStaticUriHelper');
+        if (! $moduleManager->getModule('yimaStaticUriHelper')) {
+            // yimaStaticUriHelper needed and not loaded.
+            // loadModule in default zf2 can't load more than one module
+            throw new \Exception(
+                'Module "yimaStaticUriHelper" not loaded, by zf2 module manager we can`t load this module automatically.'
+                .'please enable this module and put before "yimaWidgetator".'
+            );
         }
     }
 
@@ -91,7 +87,7 @@ class Module implements
 		return array(
 			'invokables' => array (
 				'widgetLoader' => 'yimaWidgetator\View\Helper\WidgetLoader',
-                'ajaxyWidget'  => 'yimaWidgetator\View\Helper\AjaxyWidget',
+                'widgetAjaxy'  => 'yimaWidgetator\View\Helper\WidgetAjaxy',
 			),
 			'aliases' => array (
 				'widget' => 'widgetLoader',

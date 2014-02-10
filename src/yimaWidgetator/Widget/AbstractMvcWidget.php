@@ -52,42 +52,6 @@ class AbstractMvcWidget extends AbstractWidget
     }
 
     /**
-     * Set the View object
-     *
-     * @param  Renderer $view
-     *
-     * @return mixed
-     */
-    final public function setView(Renderer $view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * Get the View object
-     *
-     * @return Renderer
-     */
-    final public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * Set view script to render by view renderer
-     *
-     * @param string|ModelInterface $nameOrModel The script/resource process, or a view model
-     *
-     * @return mixed
-     */
-    final public function setLayout($nameOrModel)
-    {
-        $this->layout = $nameOrModel;
-    }
-
-    /**
      * Get view script layout
      *
      * @return string|ModelInterface
@@ -119,6 +83,18 @@ class AbstractMvcWidget extends AbstractWidget
     }
 
     /**
+     * Set view script to render by view renderer
+     *
+     * @param string|ModelInterface $nameOrModel The script/resource process, or a view model
+     *
+     * @return mixed
+     */
+    final public function setLayout($nameOrModel)
+    {
+        $this->layout = $nameOrModel;
+    }
+
+    /**
      * Get layout path prefixed to module layout name
      *
      * @return string
@@ -134,4 +110,29 @@ class AbstractMvcWidget extends AbstractWidget
 
         return $this->inflectName($path);
     }
+
+    /**
+     * Set the View object
+     *
+     * @param  Renderer $view
+     *
+     * @return mixed
+     */
+    final public function setView(Renderer $view)
+    {
+        $this->view = $view;
+
+        return $this;
+    }
+
+    /**
+     * Get the View object
+     *
+     * @return Renderer
+     */
+    final public function getView()
+    {
+        return $this->view;
+    }
+
 }

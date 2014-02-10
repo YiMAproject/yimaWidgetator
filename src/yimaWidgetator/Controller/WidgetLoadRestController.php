@@ -4,6 +4,11 @@ namespace yimaWidgetator\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Json;
 
+/**
+ * Class WidgetLoadRestController
+ *
+ * @package yimaWidgetator\Controller
+ */
 class WidgetLoadRestController extends AbstractRestfulController
 {
     /**
@@ -29,7 +34,6 @@ class WidgetLoadRestController extends AbstractRestfulController
         return $this->proccessData($data);
     }
 
-
     protected function proccessData($data)
     {
         $response  = $this->response;
@@ -47,7 +51,6 @@ class WidgetLoadRestController extends AbstractRestfulController
 
         // get widget
         $widget  = $this->widget($data['widget']);
-        $widget->setIdPrefix('ajaxload');
 
         // run widget action {
         set_error_handler(
@@ -106,8 +109,7 @@ class WidgetLoadRestController extends AbstractRestfulController
             )
         ));
 
-        if ($exception)
-        {
+        if ($exception) {
             $response->setStatusCode(417);
         }
 
@@ -117,5 +119,4 @@ class WidgetLoadRestController extends AbstractRestfulController
 
         return $response;
     }
-
 }
