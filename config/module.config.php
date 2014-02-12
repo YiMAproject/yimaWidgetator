@@ -17,8 +17,8 @@ return array(
      * @see \yimaJquery\View\Helper\WidgetAjaxy
      */
     'static_uri_helper' => array(
-        'Yima.Widgetator.JS.Jquery.Ajaxq' => '{{basepath}}/yima-widgetator/js/jquery.ajaxq.min.js',
-        'Yima.Widgetator.JS.Jquery.Json'  => '{{basepath}}/yima-widgetator/js/jquery.json.min.js',
+        'Yima.Widgetator.JS.Jquery.Ajaxq' => '$basepath/js/yima-widgetator/jquery.ajaxq.min.js',
+        'Yima.Widgetator.JS.Jquery.Json'  => '$basepath/js/yima-widgetator/jquery.json.min.js',
     ),
 
     /**
