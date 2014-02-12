@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Controller;
 
+use yimaWidgetator\Widget\AbstractWidget;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Json;
 
@@ -44,13 +45,10 @@ class WidgetLoadRestController extends AbstractRestfulController
         $scripts   = '';
         $links     = '';
 
-        if (! (isset($data['widget']) && isset($data['action'])) ) {
+        if (!isset($data['widget'])) {
             $exception = true;
             $message   = 'ERR_INVALID_REQUEST';
         }
-
-        // get widget
-        $widget  = $this->widget($data['widget']);
 
         // run widget action {
         set_error_handler(
@@ -80,9 +78,11 @@ class WidgetLoadRestController extends AbstractRestfulController
             $headLinks  ->deleteContainer();
 
             if (!$exception) {
-                $action  = $data['action'];
-                $content = $widget->{$action}($params);
-                $content  = $renderer->render($content);
+                // get widget
+                /** @var $widget AbstractWidget */
+                $widget  = $this->widget($data['widget']);
+                $widget->setFromArray($params);
+                $content = $widget->render();
             }
 
             // get scripts back
