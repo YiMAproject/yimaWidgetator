@@ -2,6 +2,7 @@
 namespace yimaWidgetator\View\Helper;
 
 use Zend\Json;
+use Zend\Session\Container as SessionContainer;
 
 /**
  * Ajax load widgets helper
@@ -10,6 +11,8 @@ use Zend\Json;
  */
 class WidgetAjaxy extends WidgetLoader
 {
+    const SESSION_KEY = 'Widget_Ajaxy_Helper_Session_Key';
+
     /**
      * Detemine base script attached ?!!
      *
@@ -31,14 +34,26 @@ class WidgetAjaxy extends WidgetLoader
     public function __invoke($widget = null, array $params = array(), $domElemID = null, $callBack = null)
     {
         if ($widget == null) {
-
+            // return this
             return $this;
         }
 
         // attach needed scripts
-        $this->attachScripts();
+        if (!$this->isScriptsAttached()) {
+            $this->attachScripts();
+        }
 
-        // append widget loader script
+        // store a unique key in session to validate rest calls {
+        $token    = md5($widget.serialize($params).uniqid());
+
+        $sesCont = new SessionContainer(self::SESSION_KEY);
+        $sesCont->$token = time();
+        $sesCont->setExpirationSeconds(30, $token);
+
+        $params  = array_merge($params, array('request_token' => $token));
+        // ... }
+
+        // append widget loader script {
         $params   = Json\Json::encode($params);
         $callBack = ($callBack) ?: 'null';
         $this->getView()->jQuery()
@@ -47,6 +62,7 @@ class WidgetAjaxy extends WidgetLoader
                     YimaWidgetLoader('$widget', $params, '$domElemID', $callBack);
                 });
             ");
+        // ... }
 
         return $this;
     }
@@ -62,7 +78,7 @@ class WidgetAjaxy extends WidgetLoader
      */
     public function attachScripts()
     {
-        if ($this->isScriptAttached) {
+        if ($this->isScriptsAttached()) {
 
             return $this;
         }
@@ -85,5 +101,15 @@ class WidgetAjaxy extends WidgetLoader
         $this->isScriptAttached = true;
 
         return $this;
+    }
+
+    /**
+     * Is scripts attached ?
+     *
+     * @return bool
+     */
+    public function isScriptsAttached()
+    {
+        return (boolean) $this->isScriptAttached;
     }
 }

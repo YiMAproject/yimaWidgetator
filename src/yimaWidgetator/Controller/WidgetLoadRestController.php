@@ -1,8 +1,10 @@
 <?php
 namespace yimaWidgetator\Controller;
 
+use yimaWidgetator\View\Helper\WidgetAjaxy;
 use yimaWidgetator\Widget\AbstractWidget;
 use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\Session\Container as SessionContainer;
 use Zend\Json;
 
 /**
@@ -12,13 +14,9 @@ use Zend\Json;
  */
 class WidgetLoadRestController extends AbstractRestfulController
 {
-    /**
-     * array(
-     *  'exception' => false,
-     *  'content'   => '',
-     *  'message'   => '',
-     * );
-     */
+    const ERR_INVALID_REQUEST = 'err_invalid_request';
+
+    const ERR_RENDER_WIDGET   = 'err_render_widget';
 
     public function getList()
     {
@@ -37,18 +35,11 @@ class WidgetLoadRestController extends AbstractRestfulController
 
     protected function proccessData($data)
     {
-        $response  = $this->response;
-
         $exception = false;
         $message   = 'SUCCESS';
         $content   = '';
         $scripts   = '';
         $links     = '';
-
-        if (!isset($data['widget'])) {
-            $exception = true;
-            $message   = 'ERR_INVALID_REQUEST';
-        }
 
         // run widget action {
         set_error_handler(
@@ -69,6 +60,29 @@ class WidgetLoadRestController extends AbstractRestfulController
                 }
             }
 
+            // Validating requested data {
+            if (!isset($data['widget'])) {
+                $exception = true;
+                $message   = self::ERR_INVALID_REQUEST;
+            }
+
+            if (!isset($params['request_token'])) {
+                $exception = true;
+                $message   = self::ERR_INVALID_REQUEST;
+            } else {
+                // validate token
+                $token = $params['request_token'];
+
+                $sesCont = new SessionContainer(WidgetAjaxy::SESSION_KEY);
+                if (!$sesCont->offsetGet($token)) {
+                    // invalid token
+                    $exception = true;
+                    $message   = self::ERR_INVALID_REQUEST;
+                }
+            }
+
+            // ... }
+
             $renderer    = $this->getServiceLocator()->get('ViewRenderer');
 
             // reset container to have only widget script
@@ -79,9 +93,9 @@ class WidgetLoadRestController extends AbstractRestfulController
 
             if (!$exception) {
                 // get widget
+
                 /** @var $widget AbstractWidget */
                 $widget  = $this->widget($data['widget']);
-                $widget->setFromArray($params);
                 $content = $widget->render();
             }
 
@@ -92,7 +106,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         catch (\Exception $e)
         {
             $exception = true;
-            $message   = 'ERR_WIDGET_ACTION_CALL';
+            $message   = self::ERR_RENDER_WIDGET;
             $content   = $e->getMessage();
         }
 
@@ -100,6 +114,8 @@ class WidgetLoadRestController extends AbstractRestfulController
         // ... }
 
         // set response
+        $response  = $this->response;
+
         $response->setContent(Json\Json::encode(array(
                 'exception' => $exception,
                 'message'   => $message,
