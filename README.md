@@ -114,6 +114,13 @@ Example Widgets and AbstractClasses will be added.
 Installation
 -----------
 
+#### Requirement
+
+* [yimaStaticUriHelper](https://github.com/RayaMedia/yimaStaticUriHelper)
+
+* [yimaJquery](https://github.com/RayaMedia/yimaJquery)
+
+
 Composer installation:
 
 require ```rayamedia/yima-widgetator``` in your ```composer.json```
