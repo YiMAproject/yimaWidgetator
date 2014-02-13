@@ -24,14 +24,14 @@ class WidgetAjaxy extends WidgetLoader
      * Loading widgets by generating needed jScript
      *
      * @param null|string $widget    Widget registered service name, null will return this class
-     * @param array       $params    Options set into widget
+     * @param array       $options   Options set into widget
      * @param null|string $domElemID DomElementID to put widget content into
      * @param null|string $callBack  Callback after successfully widget loaded,
      *                               this call back get response from widget load controller
      *
      * @return $this|mixed
      */
-    public function __invoke($widget = null, array $params = array(), $domElemID = null, $callBack = null)
+    public function __invoke($widget = null, $options = array(), $domElemID = null, $callBack = null)
     {
         if ($widget == null) {
             // return this
@@ -44,22 +44,22 @@ class WidgetAjaxy extends WidgetLoader
         }
 
         // store a unique key in session to validate rest calls {
-        $token    = md5($widget.serialize($params).uniqid());
+        $token    = md5($widget.serialize($options).uniqid());
 
         $sesCont = new SessionContainer(self::SESSION_KEY);
         $sesCont->$token = time();
         $sesCont->setExpirationSeconds(30, $token);
 
-        $params  = array_merge($params, array('request_token' => $token));
+        $options  = array_merge($options, array('request_token' => $token));
         // ... }
 
         // append widget loader script {
-        $params   = Json\Json::encode($params);
+        $options   = Json\Json::encode($options);
         $callBack = ($callBack) ?: 'null';
         $this->getView()->jQuery()
             ->appendScript("
                 $(document).ready(function(){
-                    YimaWidgetLoader('$widget', $params, '$domElemID', $callBack);
+                    YimaWidgetLoader('$widget', $options, '$domElemID', $callBack);
                 });
             ");
         // ... }
@@ -71,7 +71,7 @@ class WidgetAjaxy extends WidgetLoader
      * Attach needed scripts to load widgets
      *
      * after attaching scripts, you can call:
-     *  YimaWidgetLoader('$widget', $params, '$domElemID', $callBack);
+     *  YimaWidgetLoader('$widget', $options, '$domElemID', $callBack);
      *  inside view and getting widgets
      *
      * @return $this

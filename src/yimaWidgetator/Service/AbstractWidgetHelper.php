@@ -33,13 +33,13 @@ class AbstractWidgetHelper
      *
      * @return mixed
      */
-    public function __invoke($widget = null)
+    public function __invoke($widget = null, $options = array())
     {
         if (null === $widget) {
             return $this->getWidgetManager();
         }
         
-        return $this->getWidgetManager()->get($widget);
+        return $this->getWidgetManager()->get($widget, $options);
     }
 
     /**

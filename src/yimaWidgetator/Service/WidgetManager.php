@@ -6,6 +6,7 @@ use yimaWidgetator\Widget\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Stdlib\AbstractOptions;
 
 
 /**
@@ -60,6 +61,11 @@ class WidgetManager extends AbstractPluginManager
     public function get($name, $options = array(), $usePeeringServiceManagers = false)
     {
     	$return = parent::get($name, $options, $usePeeringServiceManagers);
+
+        if ($return instanceof AbstractOptions) {
+            // set options
+            $return->setFromArray($options);
+        }
 
         return $return;
     }

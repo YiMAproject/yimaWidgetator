@@ -79,6 +79,8 @@ class WidgetLoadRestController extends AbstractRestfulController
                     $exception = true;
                     $message   = self::ERR_INVALID_REQUEST;
                 }
+
+                unset($params['request_token']);
             }
 
             // ... }
@@ -95,7 +97,7 @@ class WidgetLoadRestController extends AbstractRestfulController
                 // get widget
 
                 /** @var $widget AbstractWidget */
-                $widget  = $this->widget($data['widget']);
+                $widget  = $this->widget($data['widget'], $params);
                 $content = $widget->render();
             }
 
