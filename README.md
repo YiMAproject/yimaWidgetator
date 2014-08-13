@@ -24,7 +24,7 @@ interface WidgetInterface
 #### Widget plugin manager
 
 Widgets stored in widget plugin manager (serviceLocator for widgets).
-stored with serviceManager key ```yimaWidgetator\WidgetManager``` and build as factory service.
+stored with serviceManager key ```yimaWidgetator.WidgetManager``` and build as factory service.
 
 #### Define widget(s) from merged config
 

@@ -100,6 +100,17 @@ abstract class AbstractWidget extends AbstractOptions
      */
     abstract public function render();
 
+    /**
+     * To String Magic Method
+     * : flush widgets content over echo(output func.)
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
+    }
+
 	/**
 	 * Inflect a name to a normalized value
 	 *
