@@ -1,5 +1,5 @@
 <?php
-namespace yimaWidgetator\Widget;
+namespace yimaWidgetator\Widget\Interfaces;
 
 /**
  * Interface WidgetInterface

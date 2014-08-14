@@ -1,8 +1,7 @@
 <?php
 namespace yimaWidgetator\Widget;
 
-use yimaWidgetator\Service\InitializeFeatureInterface;
-
+use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\StdLib\AbstractOptions;
 use Zend\Filter;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -15,7 +14,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 abstract class AbstractWidget extends AbstractOptions
     implements
-    InitializeFeatureInterface,
     WidgetInterface,
     ServiceLocatorAwareInterface // to get serviceManager and other registered widgets from within
 {
@@ -46,19 +44,6 @@ abstract class AbstractWidget extends AbstractOptions
      * @var string Unique ID of widget
      */
     private $ID;
-
-    /**
-     * Some services injected into class after constructor
-     * with dependency injection from pluginManager.
-     *
-     * we call init() to ensure all dependency presents.
-     */
-    public function init()
-    {
-        // register widget in service locator with own unique id
-        $sl = $this->getServiceLocator();
-        $sl->setService($this->getID(), $this);
-    }
 
     /**
      * Return Unique ID for each widget

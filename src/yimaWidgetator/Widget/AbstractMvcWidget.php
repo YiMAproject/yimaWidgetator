@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Widget;
 
+use yimaWidgetator\Widget\Interfaces\MvcWidgetInterface;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
@@ -134,5 +135,4 @@ class AbstractMvcWidget extends AbstractWidget
     {
         return $this->view;
     }
-
 }
