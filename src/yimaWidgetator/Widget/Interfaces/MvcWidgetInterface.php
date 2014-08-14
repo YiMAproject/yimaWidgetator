@@ -1,32 +1,15 @@
 <?php
-namespace yimaWidgetator\Widget;
+namespace yimaWidgetator\Widget\Interfaces;
 
 use Zend\View\Model\ModelInterface;
-use Zend\View\Renderer\RendererInterface as Renderer;
 
 /**
  * Interface MvcWidgetInterface
  *
  * @package yimaWidgetator\Widget
  */
-interface MvcWidgetInterface extends WidgetInterface
+interface MvcWidgetInterface extends ViewAwareWidgetInterface
 {
-    /**
-     * Set the View object
-     *
-     * @param  Renderer $view
-     *
-     * @return mixed
-     */
-    public function setView(Renderer $view);
-
-    /**
-     * Get the View object
-     *
-     * @return Renderer
-     */
-    public function getView();
-
     /**
      * Set view script to render by view renderer
      *

@@ -1,8 +1,9 @@
 <?php
 namespace yimaWidgetator\Service;
 
-use yimaWidgetator\Widget\MvcWidgetInterface;
-use yimaWidgetator\Widget\WidgetInterface;
+use yimaWidgetator\Widget\AbstractWidget;
+use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
+use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -83,7 +84,6 @@ class WidgetManager extends AbstractPluginManager
     public function validatePlugin($plugin)
     {
         if ($plugin instanceof WidgetInterface) {
-
             return true;
         }
 
@@ -115,7 +115,7 @@ class WidgetManager extends AbstractPluginManager
         /**
          * MVC Widget
          */
-        if ($widget instanceof MvcWidgetInterface) {
+        if ($widget instanceof ViewAwareWidgetInterface) {
             if (! $sm->has('ViewRenderer')) {
                 throw new \Exception('ViewRenderer service not found on Service Manager.');
             }
@@ -126,6 +126,13 @@ class WidgetManager extends AbstractPluginManager
         if ($widget instanceof InitializeFeatureInterface) {
             // widget initialize himself after all
             $widget->init();
+        }
+
+        if ($widget instanceof AbstractWidget) {
+            /* @TODO Not Sure !! */
+            // register widget in service locator with own unique id
+            $sl = $this->getServiceLocator();
+            $sl->setService($widget->getID(), $widget);
         }
     }
 }

@@ -29,13 +29,13 @@ class Module implements
      *
      * @return void
      */
-    public function init(ModuleManagerInterface $moduleManager)
+    public function init(ModuleManagerInterface $moduleModuleManager)
     {
-        /** @var $moduleManager \Zend\ModuleManager\ModuleManager */
-        $moduleManager->loadModule('yimaJquery');
+        /** @var $moduleModuleManager \Zend\ModuleManager\ModuleManager */
+        $moduleModuleManager->loadModule('yimaJquery');
 
         //$moduleManager->loadModule('yimaStaticUriHelper');
-        if (! $moduleManager->getModule('yimaStaticUriHelper')) {
+        if (! $moduleModuleManager->getModule('yimaStaticUriHelper')) {
             // yimaStaticUriHelper needed and not loaded.
             // loadModule in default zf2 can't load more than one module
             throw new \Exception(
