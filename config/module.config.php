@@ -10,6 +10,17 @@ return array(
 		'invokables' => array(
 			# 'widgetName' => 'Widget\Class',
 		),
+        'initializers' => array (
+            // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface
+            function ($instance, $sl) {
+                if ($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
+                    $sm = $sl->getServiceLocator();
+                    $instance->setDbAdapter(
+                        $sm->get('Zend\Db\Adapter\Adapter')
+                    );
+                }
+            }
+        ),
 	),
 
     /**
