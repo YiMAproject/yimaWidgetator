@@ -55,7 +55,7 @@ class Module implements
 	{
         return array(
             'factories' => array(
-                'yimaWidgetator\WidgetManager' => 'yimaWidgetator\Service\WidgetManagerFactory',
+                'yimaWidgetator.WidgetManager' => 'yimaWidgetator\Service\WidgetManagerFactory',
             ),
         );
 	}

@@ -51,12 +51,12 @@ class AbstractWidgetHelper
     {
     	if (! $this->widgetManager) {
             $serviceManager = $this->getServiceLocator()->getServiceLocator();
-            $widgetManager  = $serviceManager->get('yimaWidgetator\WidgetManager');
+            $widgetManager  = $serviceManager->get('yimaWidgetator.WidgetManager');
 
             if (!($widgetManager instanceof WidgetManager) || !($widgetManager instanceof AbstractPluginManager)) {
                 throw new \Exception(
                     sprintf(
-                        'WidgetManager must instance of WidgetManager or AbstractPluginManager, but "%s" given from \'yimaWidgetator\WidgetManager\'',
+                        'WidgetManager must instance of WidgetManager or AbstractPluginManager, but "%s" given from \'yimaWidgetator.WidgetManager\'',
                         is_object($widgetManager) ? get_class($widgetManager) : gettype($widgetManager)
                     )
                 );
