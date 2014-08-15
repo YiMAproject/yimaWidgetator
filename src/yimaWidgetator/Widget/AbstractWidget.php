@@ -1,8 +1,8 @@
 <?php
 namespace yimaWidgetator\Widget;
 
+use Poirot\Dataset\Entity;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
-use Zend\StdLib\AbstractOptions;
 use Zend\Filter;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -12,26 +12,23 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  *
  * @package yimaWidgetator\Widget
  */
-abstract class AbstractWidget extends AbstractOptions
+abstract class AbstractWidget
     implements
     WidgetInterface,
     ServiceLocatorAwareInterface // to get serviceManager and other registered widgets from within
 {
     /**
-     * We don't need to have an exception on options that not
-     * implemented in class with getter and setter.
-     *
-     * this key completly ignored.
-     * @see AbstractOptions
-     *
-     * @var bool
+     * @var string Unique ID of widget
      */
-    protected $__strictMode__ = false;
+    private $ID;
 
     /**
-     * @var ServiceLocatorInterface|\yimaWidgetator\Service\WidgetManager
+     * Entity To Store Widget Options
+     * : with this we can retrieve data later
+     *
+     * @var Entity
      */
-    protected $serviceLocator;
+    protected $options;
 
     /**
      * FilterInterface/inflector used to normalize names for use as template identifiers
@@ -41,42 +38,9 @@ abstract class AbstractWidget extends AbstractOptions
     protected $inflector;
 
     /**
-     * @var string Unique ID of widget
+     * @var ServiceLocatorInterface|\yimaWidgetator\Service\WidgetManager
      */
-    private $ID;
-
-    /**
-     * Return Unique ID for each widget
-     *
-     * note: usage on every where that you need unique call of each widget
-     *       exp. use on jscripts on each widget id
-     *
-     * @return string
-     */
-    final public function getID()
-    {
-        $uniqStr = function($length) {
-            $char = "abcdefghijklmnopqrstuvwxyz0123456789";
-            $char = str_shuffle($char);
-            for($i = 0, $rand = '', $l = strlen($char) - 1; $i < $length; $i ++) {
-                $rand .= $char{mt_rand(0, $l)};
-            }
-
-            return $rand;
-        };
-
-        if ($this->ID == null)
-        {
-            $class     = get_called_class();
-            $module    = $this->deriveModuleNamespace($class);
-            $widget    = $this->deriveWidgetName($class);
-
-            $this->ID  = (($module != '') ? $this->inflectName($module).'_' : '')
-                .$this->inflectName($widget).'_'.$uniqStr(5);
-        }
-
-        return $this->ID;
-    }
+    protected $serviceLocator;
 
     /**
      * Render widget as string output
@@ -94,6 +58,80 @@ abstract class AbstractWidget extends AbstractOptions
     public function __toString()
     {
         return $this->render();
+    }
+
+    /**
+     * Get Options Entity Object
+     *
+     * @return Entity
+     */
+    public function getOptions()
+    {
+        if (!$this->options) {
+            $this->options = new Entity();
+        }
+
+        return $this->options;
+    }
+
+    /**
+     * Set Widget ID
+     *
+     * @param string $id Widget ID
+     *
+     * @return $this
+     */
+    public function setID($id)
+    {
+        $this->ID = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get Widget ID
+     *
+     * @return string
+     */
+    public function getID()
+    {
+        if (!$this->ID) {
+            $this->ID = $this->generateID();
+        }
+
+        return $this->ID;
+    }
+
+    /**
+     * Return Unique ID for each widget
+     *
+     * note: usage on every where that you need unique call of each widget
+     *       exp. use on jscripts on each widget id
+     *
+     * @return string
+     */
+    final public function generateID()
+    {
+        $uniqStr = function($length) {
+            $char = "abcdefghijklmnopqrstuvwxyz0123456789";
+            $char = str_shuffle($char);
+            for($i = 0, $rand = '', $l = strlen($char) - 1; $i < $length; $i ++) {
+                $rand .= $char{mt_rand(0, $l)};
+            }
+
+            return $rand;
+        };
+
+        if ($this->ID == null) {
+            $class     = get_called_class();
+            $module    = $this->deriveModuleNamespace($class);
+            $widget    = $this->deriveWidgetName($class);
+
+            $this->ID  = (($module != '') ? $this->inflectName($module).'_' : '')
+                .$this->inflectName($widget).'_'.$uniqStr(5);
+        }
+
+        return $this->ID;
     }
 
 	/**
