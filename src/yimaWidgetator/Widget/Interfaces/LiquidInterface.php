@@ -25,6 +25,13 @@ interface LiquidInterface
     public function load();
 
     /**
+     * Is Load Method Called To Stage Data
+     *
+     * @return bool
+     */
+    public function hasStageData();
+
+    /**
      * Apply loaded data and Init widget
      *
      * @return mixed
