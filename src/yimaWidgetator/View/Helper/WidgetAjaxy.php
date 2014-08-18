@@ -3,15 +3,24 @@ namespace yimaWidgetator\View\Helper;
 
 use Zend\Json;
 use Zend\Session\Container as SessionContainer;
+use Zend\View\Helper\HelperInterface;
+use Zend\View\Renderer\RendererInterface as Renderer;
 
 /**
  * Ajax load widgets helper
  *
  * @package yimaWidgetator\View\Helper
  */
-class WidgetAjaxy extends WidgetLoader
+class WidgetAjaxy implements HelperInterface
 {
     const SESSION_KEY = 'Widget_Ajaxy_Helper_Session_Key';
+
+    /**
+     * View object instance
+     *
+     * @var Renderer
+     */
+    protected $view = null;
 
     /**
      * Detemine base script attached ?!!
@@ -53,6 +62,7 @@ class WidgetAjaxy extends WidgetLoader
         $options  = array_merge($options, array('request_token' => $token));
         // ... }
 
+
         // append widget loader script {
         $options   = Json\Json::encode($options);
         $callBack = ($callBack) ?: 'null';
@@ -65,6 +75,7 @@ class WidgetAjaxy extends WidgetLoader
         // ... }
 
         return $this;
+
     }
 
     /**
@@ -98,6 +109,7 @@ class WidgetAjaxy extends WidgetLoader
                 )
             );
 
+
         $this->isScriptAttached = true;
 
         return $this;
@@ -111,5 +123,29 @@ class WidgetAjaxy extends WidgetLoader
     public function isScriptsAttached()
     {
         return (boolean) $this->isScriptAttached;
+    }
+
+    /**
+     * Set the View object
+     *
+     * @param  Renderer $view
+     *
+     * @return $this
+     */
+    public function setView(Renderer $view)
+    {
+        $this->view = $view;
+
+        return $this;
+    }
+
+    /**
+     * Get the view object
+     *
+     * @return null|Renderer
+     */
+    public function getView()
+    {
+        return $this->view;
     }
 }
