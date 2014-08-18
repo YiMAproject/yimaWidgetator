@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Controller;
 
+use yimaWidgetator\View\Helper\WidgetAjaxy;
 use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
@@ -67,7 +68,7 @@ class WidgetLoadRestController extends AbstractRestfulController
                 $content   = '{widget} param is absent.';
             }
 
-            /*if (!isset($params['request_token'])) {
+            if (!isset($params['request_token'])) {
                 $exception = true;
                 $message   = self::ERR_ACCESS_DENIED;
                 $content   = '{request_token} param is absent.';
@@ -84,7 +85,7 @@ class WidgetLoadRestController extends AbstractRestfulController
                 }
 
                 unset($params['request_token']);
-            }*/
+            }
 
             // ... }
 
