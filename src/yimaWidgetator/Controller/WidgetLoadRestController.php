@@ -1,8 +1,8 @@
 <?php
 namespace yimaWidgetator\Controller;
 
-use yimaWidgetator\View\Helper\WidgetAjaxy;
-use yimaWidgetator\Widget\AbstractWidget;
+use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
+use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Session\Container as SessionContainer;
 use Zend\Json;
@@ -15,8 +15,8 @@ use Zend\Json;
 class WidgetLoadRestController extends AbstractRestfulController
 {
     const ERR_INVALID_REQUEST = 'err_invalid_request';
-
     const ERR_RENDER_WIDGET   = 'err_render_widget';
+    const ERR_ACCESS_DENIED   = 'err_access_denied';
 
     public function getList()
     {
@@ -38,8 +38,8 @@ class WidgetLoadRestController extends AbstractRestfulController
         $exception = false;
         $message   = 'SUCCESS';
         $content   = '';
-        $scripts   = '';
-        $links     = '';
+        $scripts   = array();
+        $links     = array();
 
         // run widget action {
         set_error_handler(
@@ -64,11 +64,13 @@ class WidgetLoadRestController extends AbstractRestfulController
             if (!isset($data['widget'])) {
                 $exception = true;
                 $message   = self::ERR_INVALID_REQUEST;
+                $content   = '{widget} param is absent.';
             }
 
-            if (!isset($params['request_token'])) {
+            /*if (!isset($params['request_token'])) {
                 $exception = true;
-                $message   = self::ERR_INVALID_REQUEST;
+                $message   = self::ERR_ACCESS_DENIED;
+                $content   = '{request_token} param is absent.';
             } else {
                 // validate token
                 $token = $params['request_token'];
@@ -77,33 +79,50 @@ class WidgetLoadRestController extends AbstractRestfulController
                 if (!$sesCont->offsetGet($token)) {
                     // invalid token
                     $exception = true;
-                    $message   = self::ERR_INVALID_REQUEST;
+                    $message   = self::ERR_ACCESS_DENIED;
+                    $content   = '{request_token} is mismatch.';
                 }
 
                 unset($params['request_token']);
-            }
+            }*/
 
             // ... }
 
-            $renderer    = $this->getServiceLocator()->get('ViewRenderer');
-
-            // reset container to have only widget script
-            $headScripts = $renderer->headScript();
-            $headScripts->deleteContainer();
-            $headLinks   = $renderer->headLink();
-            $headLinks  ->deleteContainer();
-
             if (!$exception) {
-                // get widget
-
-                /** @var $widget AbstractWidget */
+                // render Widget
                 $widget  = $this->widget($data['widget'], $params);
-                $content = $widget->render();
-            }
+                if ($widget instanceof ViewAwareWidgetInterface) {
+                    // reset container to have only widget script
+                    $renderer = $widget->getView();
 
-            // get scripts back
-            $scripts = $headScripts->toString();
-            $links   = $headLinks->toString();
+                    $headScript = $renderer->headScript();
+                    $headScript->deleteContainer();
+
+                    $inlineScrpt = $renderer->inlineScript();
+                    $inlineScrpt->deleteContainer();
+
+                    $headLink    = $renderer->headLink();
+                    $headLink->deleteContainer();
+                }
+
+                /** @var $widget WidgetInterface */
+                $content = $widget->render();
+
+                if ($widget instanceof ViewAwareWidgetInterface) {
+                    // get scripts back
+                    foreach($headScript as $sc) {
+                        $scripts[] = (array) $sc;
+                    }
+
+                    foreach($inlineScrpt as $sc) {
+                        $scripts[] = (array) $sc;
+                    }
+
+                    foreach($headLink as $sc) {
+                        $links[] = (array) $sc;
+                    }
+                }
+            }
         }
         catch (\Exception $e)
         {

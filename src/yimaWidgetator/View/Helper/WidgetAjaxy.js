@@ -1,7 +1,8 @@
+//<!--
 $(document).ready(function ()
 {
-    YimaWidgetLoader = function (widget, params, containerId, callback) {
-        $('#' + containerId).addClass('loading').html('Loading');
+    YimaWidgetLoader = function (widget, params, cssSelector, callback) {
+        $(cssSelector).addClass('loading').html('Loading');
 
         $.ajaxq('widget', {
             url    : '{{url}}',
@@ -9,31 +10,26 @@ $(document).ready(function ()
             data   : { widget: widget, params: params },
             success: function (response) {
                 response = $.evalJSON(response);
-                $('#' + containerId).removeClass('loading').html(response.content);
+                $(cssSelector).removeClass('loading').html(response.content);
 
-                /*
-                if (response.scripts != null ) {
-                    $(response.scripts).prependTo('body');
+                /*for (var i in response.links) {
+                    if ($('head').find('link[href=\"' + response.links[i] + '\"]').length == 0) {
+                       $('<link rel=\"stylesheet\" type=\"text/css\" href=\"' + response.links[i] + '\" />').appendTo('head');
+                    }
+                }*/
+
+                for (var i in response.scripts) {
+                    if (response.scripts[i] != null) {
+                        if (response.scripts[i].source) {
+                            $('<script type="'+response.scripts[i].type+'">'+response.scripts[i].source+'</script>').appendTo('body');
+                        } else if (response.scripts[i].attributes.src) {
+                            // this is a file
+                            $('<script type="'+response.scripts[i].type+'" src="'+response.scripts[i].attributes.src+'"></script>').prependTo('body');
+                        }
+
+                    }
                 }
 
-                if (response.links != null ) {
-                    $(response.links).appendTo('head');
-                }
-                */
-
-                 /*
-                 for (var i in response.css) {
-                 if ($('head').find('link[href=\"' + response.css[i] + '\"]').length == 0) {
-                 $('<link rel=\"stylesheet\" type=\"text/css\" href=\"' + response.css[i] + '\" />').appendTo('head');
-                 }
-                 }
-
-                 if (response.javascript[i].script != null) {
-                 $('
-                 <script type=\"text/javascript\">' + response.javascript[i].script + '</scrip>').prependTo('body');
-                 }
-                 }
-                 */
 
                 // Run the callback
                 if (callback) {
@@ -44,8 +40,9 @@ $(document).ready(function ()
                 //response = $.evalJSON(response);
                 //console.log(response);
                 //response = $.evalJSON(response.responseText);
-                $('#' + containerId).removeClass('loading').html(response.responseText);
+                $(cssSelector).removeClass('loading').html(response.responseText);
             }
         });
     };
 });
+//-->

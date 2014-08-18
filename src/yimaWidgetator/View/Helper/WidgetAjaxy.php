@@ -32,15 +32,15 @@ class WidgetAjaxy implements HelperInterface
     /**
      * Loading widgets by generating needed jScript
      *
-     * @param null|string $widget    Widget registered service name, null will return this class
-     * @param array       $options   Options set into widget
-     * @param null|string $domElemID DomElementID to put widget content into
-     * @param null|string $callBack  Callback after successfully widget loaded,
-     *                               this call back get response from widget load controller
+     * @param null|string $widget      Widget registered service name, null will return this class
+     * @param array       $options     Options set into widget
+     * @param null|string $cssSelector Css Selector to put widget content into
+     * @param null|string $callBack    Callback after successfully widget loaded,
+     *                                 this call back get response from widget load controller
      *
      * @return $this|mixed
      */
-    public function __invoke($widget = null, $options = array(), $domElemID = null, $callBack = null)
+    public function __invoke($widget = null, $options = array(), $cssSelector = null, $callBack = null)
     {
         if ($widget == null) {
             // return this
@@ -69,7 +69,7 @@ class WidgetAjaxy implements HelperInterface
         $this->getView()->jQuery()
             ->appendScript("
                 $(document).ready(function(){
-                    YimaWidgetLoader('$widget', $options, '$domElemID', $callBack);
+                    YimaWidgetLoader('$widget', $options, '$cssSelector', $callBack);
                 });
             ");
         // ... }
