@@ -61,6 +61,26 @@ abstract class AbstractWidget
     }
 
     /**
+     * Call Setter methods from array
+     * : variable_name => setVariableName()
+     *
+     * @return $this
+     */
+    public function setFromArray(array $options)
+    {
+        foreach ($options as $key => $val) {
+            $setter = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
+            if (!method_exists($this, $setter)) {
+                continue;
+            }
+
+            $this->{$setter}($val);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get Options Entity Object
      *
      * @return Entity
@@ -81,7 +101,7 @@ abstract class AbstractWidget
      *
      * @return $this
      */
-    public function setID($id)
+    public function setUid($id)
     {
         $this->ID = $id;
 
@@ -93,7 +113,7 @@ abstract class AbstractWidget
      *
      * @return string
      */
-    public function getID()
+    public function getUid()
     {
         if (!$this->ID) {
             $this->ID = $this->generateID();

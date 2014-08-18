@@ -2,6 +2,7 @@
 namespace yimaWidgetator\Service;
 
 use yimaWidgetator\Widget\AbstractWidget;
+use yimaWidgetator\Widget\Interfaces\OptionProviderInterface;
 use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -63,9 +64,9 @@ class WidgetManager extends AbstractPluginManager
     {
     	$return = parent::get($name, $options, $usePeeringServiceManagers);
 
-        if ($return instanceof AbstractOptions) {
-            // set options
-            $return->setFromArray($options);
+        if (method_exists($return, 'setFromArray')) {
+            // call setter methods from array option
+            call_user_func_array(array($return, 'setFromArray'), array($options));
         }
 
         return $return;
@@ -128,11 +129,10 @@ class WidgetManager extends AbstractPluginManager
             $widget->init();
         }
 
-        if ($widget instanceof AbstractWidget) {
-            /* @TODO Not Sure !! */
+        /*if ($widget instanceof AbstractWidget) {
             // register widget in service locator with own unique id
             $sl = $this->getServiceLocator();
             $sl->setService($widget->getID(), $widget);
-        }
+        }*/
     }
 }
