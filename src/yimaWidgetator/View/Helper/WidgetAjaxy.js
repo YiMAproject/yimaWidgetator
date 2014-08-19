@@ -12,11 +12,11 @@ $(document).ready(function ()
                 response = $.evalJSON(response);
                 $(cssSelector).removeClass('loading').html(response.content);
 
-                /*for (var i in response.links) {
+                for (var i in response.links) {
                     if ($('head').find('link[href=\"' + response.links[i] + '\"]').length == 0) {
-                       $('<link rel=\"stylesheet\" type=\"text/css\" href=\"' + response.links[i] + '\" />').appendTo('head');
+                       $('<link rel=\"'+response.links[i].rel+'\" type=\"'+response.links[i].type+'\" href=\"' + response.links[i].href + '\" />').appendTo('head');
                     }
-                }*/
+                }
 
                 for (var i in response.scripts) {
                     if (response.scripts[i] != null) {
