@@ -52,16 +52,8 @@ class WidgetAjaxy implements HelperInterface
             $this->attachScripts();
         }
 
-        // store a unique key in session to validate rest calls {
-        $token    = md5($widget.serialize($options).uniqid());
-
-        $sesCont = new SessionContainer(self::SESSION_KEY);
-        $sesCont->$token = time();
-        $sesCont->setExpirationSeconds(30, $token);
-
+        $token    = $this->generateToken();
         $options  = array_merge($options, array('request_token' => $token));
-        // ... }
-
 
         // append widget loader script {
         $options   = Json\Json::encode($options);
@@ -76,6 +68,22 @@ class WidgetAjaxy implements HelperInterface
 
         return $this;
 
+    }
+
+    /**
+     * Store a unique key in session to validate rest calls
+     *
+     * @return string
+     */
+    public function generateToken()
+    {
+        $token   = md5(__CLASS__.uniqid());
+
+        $sesCont = new SessionContainer(self::SESSION_KEY);
+        $sesCont->$token = time();
+        $sesCont->setExpirationSeconds(30, $token);
+
+        return $token;
     }
 
     /**
