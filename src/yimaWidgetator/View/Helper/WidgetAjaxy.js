@@ -24,12 +24,14 @@ $(document).ready(function ()
                             $('<script type="'+response.scripts[i].type+'">'+response.scripts[i].source+'</script>').appendTo('body');
                         } else if (response.scripts[i].attributes.src) {
                             // this is a file
-                            $('<script type="'+response.scripts[i].type+'" src="'+response.scripts[i].attributes.src+'"></script>').prependTo('body');
+                            if ($('body').find('script[src=\"'+response.scripts[i].attributes.src+'\"]').length == 0) {
+                                if ($('head').find('script[src=\"'+response.scripts[i].attributes.src+'\"]').length == 0) {
+                                    $('<script type="'+response.scripts[i].type+'" src="'+response.scripts[i].attributes.src+'"></script>').appendTo('body');
+                                }
+                            }
                         }
-
                     }
                 }
-
 
                 // Run the callback
                 if (callback) {
