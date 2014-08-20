@@ -61,32 +61,34 @@ class WidgetLoadRestController extends AbstractRestfulController
                 }
             }
 
-            // Validating requested data {
+            // Validating requested data ... {
             if (!isset($data['widget'])) {
                 $exception = true;
                 $message   = self::ERR_INVALID_REQUEST;
                 $content   = '{widget} param is absent.';
             }
 
-            if (!isset($params['request_token'])) {
-                $exception = true;
-                $message   = self::ERR_ACCESS_DENIED;
-                $content   = '{request_token} param is absent.';
-            } else {
-                // validate token
-                $token = $params['request_token'];
-
-                $sesCont = new SessionContainer(WidgetAjaxy::SESSION_KEY);
-                if (!$sesCont->offsetGet($token)) {
-                    // invalid token
+            if (!$this->request->isXmlHttpRequest()) {
+                // No Token Needed for ajax requests
+                if (!isset($params['request_token'])) {
                     $exception = true;
                     $message   = self::ERR_ACCESS_DENIED;
-                    $content   = '{request_token} is mismatch.';
+                    $content   = '{request_token} param is absent.';
+                } else {
+                    // validate token
+                    $token = $params['request_token'];
+
+                    $sesCont = new SessionContainer(WidgetAjaxy::SESSION_KEY);
+                    if (!$sesCont->offsetGet($token)) {
+                        // invalid token
+                        $exception = true;
+                        $message   = self::ERR_ACCESS_DENIED;
+                        $content   = '{request_token} is mismatch.';
+                    }
+
+                    unset($params['request_token']);
                 }
-
-                unset($params['request_token']);
             }
-
             // ... }
 
             if (!$exception) {
