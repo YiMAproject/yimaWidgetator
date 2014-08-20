@@ -30,38 +30,40 @@ class WidgetAjaxy implements HelperInterface
     protected $isScriptAttached = false;
 
     /**
-     * Loading widgets by generating needed jScript
+     * Loading widgets with ajax by generating needed jScript
      *
-     * @param null|string $widget      Widget registered service name, null will return this class
-     * @param array       $options     Options set into widget
-     * @param null|string $cssSelector Css Selector to put widget content into
-     * @param null|string $callBack    Callback after successfully widget loaded,
-     *                                 this call back get response from widget load controller
+     * @param string|null  $cssSelector Css Selector
+     * @param array        $options     Widgetator Options
      *
-     * @return $this|mixed
+     * @return $this
      */
-    public function __invoke($widget = null, $options = array(), $cssSelector = null, $callBack = null)
+    public function __invoke($cssSelector = null, $options = array())
     {
-        if ($widget == null) {
+        if ($cssSelector == null) {
             // return this
             return $this;
         }
+
+        $defaults = array (
+            'method'   => 'render',
+            'params'   => array(),
+            // 'callback' => 'function(element, response){}',
+
+            'request_token' => $this->generateToken(),
+        );
+        $options = array_merge($defaults, $options);
 
         // attach needed scripts
         if (!$this->isScriptsAttached()) {
             $this->attachScripts();
         }
 
-        $token    = $this->generateToken();
-        $options  = array_merge($options, array('request_token' => $token));
-
         // append widget loader script {
-        $options   = Json\Json::encode($options);
-        $callBack = ($callBack) ?: 'null';
+        $requestParams   = Json\Json::encode($options);
         $this->getView()->jQuery()
             ->appendScript("
                 $(document).ready(function(){
-                    YimaWidgetLoader('$widget', $options, '$cssSelector', $callBack);
+                    $('$cssSelector').widgetator($requestParams);
                 });
             ");
         // ... }
