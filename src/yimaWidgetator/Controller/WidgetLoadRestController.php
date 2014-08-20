@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Controller;
 
+use yimaWidgetator\Service;
 use yimaWidgetator\View\Helper\WidgetAjaxy;
 use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
@@ -15,10 +16,13 @@ use Zend\Json;
  */
 class WidgetLoadRestController extends AbstractRestfulController
 {
-    const ERR_INVALID_REQUEST = 'err_invalid_request';
-    const ERR_RENDER_WIDGET   = 'err_render_widget';
-    const ERR_ACCESS_DENIED   = 'err_access_denied';
+    const REST_SUCCESS = 'rest_success';
 
+    /**
+     * Return list of resources
+     *
+     * @return mixed
+     */
     public function getList()
     {
         $request   = $this->getRequest();
@@ -29,6 +33,12 @@ class WidgetLoadRestController extends AbstractRestfulController
         return $this->proccessData($data);
     }
 
+    /**
+     * Create a new resource
+     *
+     * @param  mixed $data
+     * @return mixed
+     */
     public function create($data)
     {
         return $this->proccessData($data);
@@ -37,20 +47,13 @@ class WidgetLoadRestController extends AbstractRestfulController
     protected function proccessData($data)
     {
         $exception = false;
-        $message   = 'SUCCESS';
-        $content   = '';
-        $scripts   = array();
-        $links     = array();
+        $message   = self::REST_SUCCESS;
+        $result    = null;
 
-        // run widget action {
-        set_error_handler(
-            function ($error, $errmsg = '', $file = '', $line = 0) use (&$exception, &$message, &$content) {
-                $exception = true;
-                $message   = 'ERR_WIDGET_ACTION_CALL';
-                $content   = $errmsg;
-            }, E_ALL
-        );
         try {
+            // Validate Data
+            $this->validateData($data);
+
             $params = array();
             if(isset($data['params'])) {
                 if (is_array($data['params'])) {
@@ -60,103 +63,126 @@ class WidgetLoadRestController extends AbstractRestfulController
                     $params = Json\Json::decode($data['params']);
                 }
             }
-
-            // Validating requested data ... {
-            if (!isset($data['widget'])) {
-                $exception = true;
-                $message   = self::ERR_INVALID_REQUEST;
-                $content   = '{widget} param is absent.';
-            }
-
-            if (!$this->request->isXmlHttpRequest()) {
-                // No Token Needed for ajax requests
-                if (!isset($params['request_token'])) {
-                    $exception = true;
-                    $message   = self::ERR_ACCESS_DENIED;
-                    $content   = '{request_token} param is absent.';
-                } else {
-                    // validate token
-                    $token = $params['request_token'];
-
-                    $sesCont = new SessionContainer(WidgetAjaxy::SESSION_KEY);
-                    if (!$sesCont->offsetGet($token)) {
-                        // invalid token
-                        $exception = true;
-                        $message   = self::ERR_ACCESS_DENIED;
-                        $content   = '{request_token} is mismatch.';
-                    }
-
-                    unset($params['request_token']);
-                }
-            }
-            // ... }
-
-            if (!$exception) {
-                // render Widget
-                $widget  = $this->widget($data['widget'], $params);
-                if ($widget instanceof ViewAwareWidgetInterface) {
-                    // reset container to have only widget script
-                    $renderer = $widget->getView();
-
-                    $headScript = $renderer->headScript();
-                    $headScript->deleteContainer();
-
-                    $inlineScrpt = $renderer->inlineScript();
-                    $inlineScrpt->deleteContainer();
-
-                    $headLink    = $renderer->headLink();
-                    $headLink->deleteContainer();
-                }
-
-                /** @var $widget WidgetInterface */
-                $content = $widget->render();
-
-                if ($widget instanceof ViewAwareWidgetInterface) {
-                    // get scripts back
-                    foreach($headScript as $sc) {
-                        $scripts[] = (array) $sc;
-                    }
-
-                    foreach($inlineScrpt as $sc) {
-                        $scripts[] = (array) $sc;
-                    }
-
-                    foreach($headLink as $sc) {
-                        $links[] = (array) $sc;
-                    }
-                }
-            }
+            // Call Widget
+            $result = $this->processWidget($data['widget'], $data['method'], $params);
         }
         catch (\Exception $e)
         {
             $exception = true;
-            $message   = self::ERR_RENDER_WIDGET;
-            $content   = $e->getMessage();
+            $message   = get_class($e);
+            $result    = $e->getMessage();
+
+            $this->response
+                ->setStatusCode(417);
         }
 
-        restore_error_handler();
-        // ... }
-
         // set response
-        $response  = $this->response;
-
+        $response = $this->response;
         $response->setContent(Json\Json::encode(array(
                 'exception' => $exception,
                 'message'   => $message,
-                'content'   => $content,
-                'scripts'   => $scripts,
-                'links'     => $links,
+                'result'    => $result,
             )
         ));
-
-        if ($exception) {
-            $response->setStatusCode(417);
-        }
 
         $header = new \Zend\Http\Header\ContentType();
         $header->value = 'Application/Json';
         $response->getHeaders()->addHeader($header);
 
         return $response;
+    }
+
+    protected function processWidget($widget, $method, array $params)
+    {
+        $result = array();
+
+        set_error_handler(
+            function ($error, $errmsg = '', $file = '', $line = 0) use (&$exception, &$message, &$content) {
+                $message .= " at file:$file, line:$line ";
+                throw new Service\Exceptions\RuntimeException($message);
+            }, E_ALL
+        );
+
+        // Get widget and set params from Controller Plugin
+        $widget  = $this->widget($widget, $params);
+
+        // WIDGET PREPROCESS ... {
+        if ($widget instanceof ViewAwareWidgetInterface) {
+            // reset container to have only widget script
+            $renderer = $widget->getView();
+
+            $headScript = $renderer->headScript();
+            $headScript->deleteContainer();
+
+            $inlineScrpt = $renderer->inlineScript();
+            $inlineScrpt->deleteContainer();
+
+            $headLink    = $renderer->headLink();
+            $headLink->deleteContainer();
+        }
+        // ... WIDGET PREPROCESS }
+
+        /** @var $widget WidgetInterface */
+        if (!method_exists($widget, $method))
+            throw new Service\Exceptions\RuntimeException("Method($method) not found on widget '".get_class($widget)."'");
+        $result['content'] = $widget->{$method}();
+
+        // WIDGET POSTPROCESS ... {
+        if ($widget instanceof ViewAwareWidgetInterface) {
+            // get scripts back
+            foreach($headScript as $sc) {
+                $result['scripts'][] = (array) $sc;
+            }
+
+            foreach($inlineScrpt as $sc) {
+                $result['scripts'][] = (array) $sc;
+            }
+
+            foreach($headLink as $sc) {
+                $result['links'][] = (array) $sc;
+            }
+        }
+        // ... WIDGET POSTPROCESS }
+
+        restore_error_handler();
+
+        return $result;
+    }
+
+    /**
+     * Validate Data
+     *
+     * @param array $data Data
+     *
+     * @throws \yimaWidgetator\Service\Exceptions\UnauthorizedException
+     * @throws \yimaWidgetator\Service\Exceptions\InvalidArgumentException
+     */
+    protected function validateData($data)
+    {
+        if (!isset($data['widget'])) {
+            throw new Service\Exceptions\InvalidArgumentException('{widget} param is absent.');
+        }
+
+        if (!isset($data['method'])) {
+            throw new Service\Exceptions\InvalidArgumentException('{method} param is absent.');
+        }
+
+        if (!$this->request->isXmlHttpRequest()) {
+            // No Token Needed for ajax requests
+            if (!isset($params['request_token'])) {
+                throw new Service\Exceptions\UnauthorizedException('{request_token} param is absent.');
+            } else {
+                // validate token
+                $token = $params['request_token'];
+
+                $sesCont = new SessionContainer(WidgetAjaxy::SESSION_KEY);
+                if (!$sesCont->offsetGet($token)) {
+                    // invalid token
+                    throw new Service\Exceptions\UnauthorizedException('{request_token} is mismatch.');
+                }
+
+                unset($params['request_token']);
+            }
+        }
     }
 }
