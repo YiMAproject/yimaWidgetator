@@ -123,8 +123,8 @@ class WidgetLoadRestController extends AbstractRestfulController
 
         foreach ($data['interfunc'] as $dif) {
             // call a method from widget
-            $method = $dif[0];
-            $reskey = $dif[1];
+            $reskey = $dif[0];
+            $method = $dif[1];
             if (!method_exists($widget, $method))
                 throw new Service\Exceptions\RuntimeException("Method($method) as interfunc not found on widget '".get_class($widget)."'");
             $result[$reskey] = $widget->{$method}();
@@ -191,7 +191,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         $interfunc = explode(';', $interfunc);
         $data['interfunc'] = array();
         foreach($interfunc as $if) {
-            // method:key, value returned from (method) will returned as (key) in last result
+            // key:value, value returned from (method) will returned as (key) in last result
             // call a method and append returned value to result array
             $if = explode(':', $if);
             if (count($if) > 2 || count($if) < 2)
