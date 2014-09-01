@@ -52,6 +52,10 @@ class WidgetAjaxy implements HelperInterface
             'request_token' => $this->generateToken(),
         );
         $options = array_merge($defaults, $options);
+        if (isset($options['callback'])){
+            $callback = $options['callback'];
+            unset($options['callback']);
+        }
 
         // attach needed scripts
         if (!$this->isScriptsAttached()) {
@@ -60,10 +64,11 @@ class WidgetAjaxy implements HelperInterface
 
         // append widget loader script {
         $requestParams   = Json\Json::encode($options);
+        $jsfunc = ($callback) ? "widgetator($requestParams, $callback);" : "widgetator($requestParams);";
         $this->getView()->jQuery()
             ->appendScript("
                 $(document).ready(function(){
-                    $('$cssSelector').widgetator($requestParams);
+                    $('$cssSelector').$jsfunc;
                 });
             ");
         // ... }

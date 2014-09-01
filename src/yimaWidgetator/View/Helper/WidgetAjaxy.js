@@ -4,22 +4,23 @@
      * Load Widget By Making An Ajax Call
      *
      * @param options
+     * @param callback Callback after loading widget
+     *
      * @returns {$.fn} jQuery DOM Element Object
      */
-    $.fn.widgetator = function (options)
+    $.fn.widgetator = function (options, callback)
     {
         var settings    = $.fn.widgetator.settings;
 
         var defaults = {
                widget: '',            // widget name
                method: 'render',      // call method from widget object
-               params: {},            // parameters passed to method
-             callback: function(element, response){}   // callback after loading widget
+               params: {}            // parameters passed to method
         };
 
-        if ((!options.method || options.method == 'render') && !options.callback) {
+        if ((!options.method || options.method == 'render') && !callback) {
             // use default callback on render if not present
-            defaults.callback = $.fn.widgetator.defaultCallback;
+            callback = $.fn.widgetator.defaultCallback;
         }
 
         var exOptions = $.extend(false, defaults, options);
@@ -31,14 +32,14 @@
         $.ajaxq('widgetator', {
             url     : settings.provider_url,
             type    : 'POST',
-            data    : { widget: exOptions.widget, method:exOptions.method, params: exOptions.params },
+            data    : exOptions,
             success : function (response) {
                 response = $.evalJSON(response);
                 $this.removeClass(settings.loading_class);
 
-                // Run the callback
-                if (exOptions.callback) {
-                    exOptions.callback($this, response);
+                if (callback) {
+                    // Run the callback
+                    callback($this, response);
                 }
             },
             error   : function (response) {
