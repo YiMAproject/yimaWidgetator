@@ -25,8 +25,10 @@ class Module implements
     /**
      * Initialize workflow
      *
-     * @param  ModuleManagerInterface $manager
+     * @param ModuleManagerInterface $moduleModuleManager
+     * @internal param ModuleManagerInterface $manager
      *
+     * @throws \Exception
      * @return void
      */
     public function init(ModuleManagerInterface $moduleModuleManager)

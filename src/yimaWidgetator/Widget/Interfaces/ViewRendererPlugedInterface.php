@@ -3,12 +3,7 @@ namespace yimaWidgetator\Widget\Interfaces;
 
 use Zend\View\Renderer\RendererInterface as Renderer;
 
-/**
- * Interface ViewAwareWidgetInterface
- *
- * @package yimaWidgetator\Widget
- */
-interface ViewAwareWidgetInterface extends WidgetInterface
+interface ViewRendererPlugInterface extends WidgetInterface
 {
     /**
      * Set the View object

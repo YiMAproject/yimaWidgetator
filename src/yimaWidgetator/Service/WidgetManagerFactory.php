@@ -3,11 +3,6 @@ namespace yimaWidgetator\Service;
 
 use Zend\ServiceManager;
 
-/**
- * Class WidgetLoaderFactory
- *
- * @package yimaWidgetator\Service
- */
 class WidgetManagerFactory implements ServiceManager\FactoryInterface
 {
     /**

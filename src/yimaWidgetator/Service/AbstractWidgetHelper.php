@@ -5,13 +5,9 @@ use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-/**
- * Class AbstractWidgetHelper
- *
- * @package yimaWidgetator\Service
- */
 class AbstractWidgetHelper
-    implements ServiceLocatorAwareInterface
+    implements
+    ServiceLocatorAwareInterface
 {
 	/**
 	 * @var WidgetManager
@@ -22,29 +18,31 @@ class AbstractWidgetHelper
      * @var ServiceLocatorInterface
      */
     protected $serviceLocator;
-	
+
     /**
      * Invoke as a functor
      *
-     * If no arguments are given, grabs WidgetLoader
-     * Otherwise, attempts to get widget from WidgetLoader
+     * - if no arguments are given, grabs WidgetLoader
+     *   Otherwise: attempts to get widget from WidgetLoader
      *
      * @param  null|string $widget
+     * @param array        $options
      *
+     * @throws \Exception
      * @return mixed
      */
-    public function __invoke($widget = null, $options = array())
+    public function __invoke($widget = null, $options = [])
     {
-        if (null === $widget) {
+        if (null === $widget)
             return $this->getWidgetManager();
-        }
-        
+
         return $this->getWidgetManager()->get($widget, $options);
     }
 
     /**
      * Get Widget Manager
      *
+     * @throws \Exception
      * @return WidgetManager
      */
     protected function getWidgetManager()
@@ -53,14 +51,13 @@ class AbstractWidgetHelper
             $serviceManager = $this->getServiceLocator()->getServiceLocator();
             $widgetManager  = $serviceManager->get('yimaWidgetator.WidgetManager');
 
-            if (!($widgetManager instanceof WidgetManager) || !($widgetManager instanceof AbstractPluginManager)) {
-                throw new \Exception(
-                    sprintf(
-                        'WidgetManager must instance of WidgetManager or AbstractPluginManager, but "%s" given from \'yimaWidgetator.WidgetManager\'',
-                        is_object($widgetManager) ? get_class($widgetManager) : gettype($widgetManager)
-                    )
-                );
-            }
+            if (!($widgetManager instanceof WidgetManager)
+                || !($widgetManager instanceof AbstractPluginManager)
+            )
+                throw new \Exception(sprintf(
+                    'WidgetManager must instance of WidgetManager or AbstractPluginManager, but "%s" given from \'yimaWidgetator.WidgetManager\'',
+                    is_object($widgetManager) ? get_class($widgetManager) : gettype($widgetManager)
+                ));
 
             $this->widgetManager = $widgetManager;
     	}
@@ -84,9 +81,10 @@ class AbstractWidgetHelper
     }
 
     /**
-     * Get the main plugin manager. Useful for fetching dependencies from within factories.
+     * Get the main plugin manager.
+     * Useful for fetching dependencies from within factories.
      *
-     * @return
+     * @return \Zend\ServiceManager\ServiceLocatorInterface
      */
     public function getServiceLocator()
     {

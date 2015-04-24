@@ -1,20 +1,18 @@
 <?php
 namespace yimaWidgetator\Widget;
 
-use Poirot\Dataset\Entity;
-use yimaWidgetator\Widget\Interfaces\WidgetInterface;
+use Poirot\Core\Interfaces\iPoirotOptions;
+use Poirot\Core\OpenOptions;
 use Zend\Filter;
+use Poirot\Core\Interfaces\OptionsProviderInterface;
+use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-/**
- * Class AbstractMvcWidget
- *
- * @package yimaWidgetator\Widget
- */
 abstract class AbstractWidget
     implements
     WidgetInterface,
+    OptionsProviderInterface,
     ServiceLocatorAwareInterface // to get serviceManager and other registered widgets from within
 {
     /**
@@ -23,10 +21,7 @@ abstract class AbstractWidget
     private $ID;
 
     /**
-     * Entity To Store Widget Options
-     * : with this we can retrieve data later
-     *
-     * @var Entity
+     * @var iPoirotOptions
      */
     protected $options;
 
@@ -55,43 +50,42 @@ abstract class AbstractWidget
      *
      * @return string
      */
-    public function __toString()
+    function __toString()
     {
         return $this->render();
     }
 
     /**
-     * Call Setter methods from array
-     * : variable_name => setVariableName()
-     *
-     * @return $this
+     * @return iPoirotOptions
      */
-    public function setFromArray(array $options)
+    function options()
     {
-        foreach ($options as $key => $val) {
-            $setter = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
-            if (!method_exists($this, $setter)) {
-                continue;
-            }
+        if (!$this->options)
+            $this->options = self::optionsIns();
 
-            $this->{$setter}($val);
-        }
-
-        return $this;
+        return $this->options;
     }
 
     /**
-     * Get Options Entity Object
+     * Get An Bare Options Instance
      *
-     * @return Entity
+     * ! you can use any options object specific related
+     *   to widget. exp. setBgColor('black')
+     *
+     * ! it used on easy access to options instance
+     *   before constructing class
+     *   [php]
+     *      $opt = Filesystem::optionsIns();
+     *      $opt->setSomeOption('value');
+     *
+     *      $class = new Filesystem($opt);
+     *   [/php]
+     *
+     * @return iPoirotOptions
      */
-    public function getOptions()
+    static function optionsIns()
     {
-        if (!$this->options) {
-            $this->options = new Entity();
-        }
-
-        return $this->options;
+        return new OpenOptions();
     }
 
     /**
@@ -101,7 +95,7 @@ abstract class AbstractWidget
      *
      * @return $this
      */
-    public function setUid($id)
+    function setUid($id)
     {
         $this->ID = $id;
 
@@ -113,11 +107,10 @@ abstract class AbstractWidget
      *
      * @return string
      */
-    public function getUid()
+    function getUid()
     {
-        if (!$this->ID) {
+        if (!$this->ID)
             $this->ID = $this->generateID();
-        }
 
         return $this->ID;
     }
@@ -130,7 +123,7 @@ abstract class AbstractWidget
      *
      * @return string
      */
-    final public function generateID()
+    final function generateID()
     {
         $uniqStr = function($length) {
             $char = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -171,7 +164,9 @@ abstract class AbstractWidget
 	}
 	
 	/**
-	 * Determine the top-level namespace of the controller
+	 * Determine the top-level namespace of the object
+     *
+     * note: TopLevel\Namespaces\To\Object
 	 *
 	 * @return string
 	 */
@@ -179,10 +174,8 @@ abstract class AbstractWidget
 	{
         $widget = get_class($this);
 
-		if (!strstr($widget, '\\')) {
-
+		if (!strstr($widget, '\\'))
 			return '';
-		}
 
 		$module = substr($widget, 0, strpos($widget, '\\'));
 
@@ -191,8 +184,6 @@ abstract class AbstractWidget
 	
 	/**
 	 * Determine the name of the widget
-	 *
-	 * Strip the namespace, and the suffix "yimaWidgetator" if present.
 	 *
 	 * @return string
 	 */

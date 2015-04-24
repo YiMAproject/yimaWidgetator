@@ -5,11 +5,6 @@ use yimaWidgetator\Service\AbstractWidgetHelper;
 use Zend\View\Helper\HelperInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
-/**
- * Class WidgetLoader
- *
- * @package yimaWidgetator\View\Helper
- */
 class WidgetLoader extends AbstractWidgetHelper
     implements HelperInterface
 {

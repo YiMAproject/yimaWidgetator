@@ -1,20 +1,15 @@
 <?php
 namespace yimaWidgetator\Service;
 
-use yimaWidgetator\Widget\AbstractWidget;
-use yimaWidgetator\Widget\Interfaces\OptionProviderInterface;
-use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
+use yimaWidgetator\Widget\Interfaces\ViewRendererPlugInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\AbstractOptions;
-
 
 /**
  * Manager for loading widgets
  *
- * @category   yimaWidgetator
  */
 class WidgetManager extends AbstractPluginManager 
 {
@@ -48,7 +43,7 @@ class WidgetManager extends AbstractPluginManager
         parent::__construct($configuration);
         
         // Pushing to bottom of stack to ensure this is done last ------ V
-		$this->addInitializer(array($this, 'injectWidgetDependencies'), false);
+		$this->addInitializer([$this, 'injectWidgetDependencies'], false);
     }
 
     /**
@@ -60,13 +55,13 @@ class WidgetManager extends AbstractPluginManager
      *
      * @return mixed
      */
-    public function get($name, $options = array(), $usePeeringServiceManagers = false)
+    public function get($name, $options = [], $usePeeringServiceManagers = false)
     {
     	$return = parent::get($name, $options, $usePeeringServiceManagers);
 
         if (method_exists($return, 'setFromArray')) {
             // call setter methods from array option
-            call_user_func_array(array($return, 'setFromArray'), array($options));
+            call_user_func_array([$return, 'setFromArray'], [$options]);
         }
 
         return $return;
@@ -84,24 +79,22 @@ class WidgetManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if ($plugin instanceof WidgetInterface) {
+        if ($plugin instanceof WidgetInterface)
             return true;
-        }
 
-        throw new \Exception(
-            sprintf(
-                'yimaWidgetator of type %s is invalid; must implement yimaWidgetator\Widget\WidgetInterface',
-                (is_object($plugin) ? get_class($plugin) : gettype($plugin))
-            )
-        );
+        throw new \Exception(sprintf(
+            'yimaWidgetator of type %s is invalid; must implement yimaWidgetator\Widget\WidgetInterface',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin))
+        ));
     }
 
     /**
      * Inject required dependencies into the widget.
      *
-     * @param  WidgetInterface         $widget
+     * @param  WidgetInterface $widget
      * @param  ServiceLocatorInterface $serviceLocator
      *
+     * @throws \Exception
      * @return void
      */
     public function injectWidgetDependencies(WidgetInterface $widget, ServiceLocatorInterface $serviceLocator)
@@ -116,7 +109,7 @@ class WidgetManager extends AbstractPluginManager
         /**
          * MVC Widget
          */
-        if ($widget instanceof ViewAwareWidgetInterface) {
+        if ($widget instanceof ViewRendererPlugInterface) {
             if (! $sm->has('ViewRenderer')) {
                 throw new \Exception('ViewRenderer service not found on Service Manager.');
             }

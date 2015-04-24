@@ -3,7 +3,7 @@ namespace yimaWidgetator\Controller;
 
 use yimaWidgetator\Service;
 use yimaWidgetator\View\Helper\WidgetAjaxy;
-use yimaWidgetator\Widget\Interfaces\ViewAwareWidgetInterface;
+use yimaWidgetator\Widget\Interfaces\ViewRendererPlugedInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Session\Container as SessionContainer;
@@ -101,7 +101,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         $widget  = $this->widget($widget, $params);
 
         // WIDGET PREPROCESS ... {
-        if ($widget instanceof ViewAwareWidgetInterface) {
+        if ($widget instanceof ViewRendererPlugedInterface) {
             // reset container to have only widget script
             $renderer = $widget->getView();
 
@@ -131,7 +131,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         }
 
         // WIDGET POSTPROCESS ... {
-        if ($widget instanceof ViewAwareWidgetInterface) {
+        if ($widget instanceof ViewRendererPlugedInterface) {
             // get scripts back
             foreach($headScript as $sc) {
                 $result['scripts'][] = (array) $sc;

@@ -1,11 +1,6 @@
 <?php
 namespace yimaWidgetator\Widget\Interfaces;
 
-/**
- * Interface WidgetInterface
- *
- * @package yimaWidgetator\Widget
- */
 interface WidgetInterface
 {
     /**
@@ -13,5 +8,5 @@ interface WidgetInterface
      *
      * @return string
      */
-    public function render();
+    function render();
 }

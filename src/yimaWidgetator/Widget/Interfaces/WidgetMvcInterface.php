@@ -8,7 +8,7 @@ use Zend\View\Model\ModelInterface;
  *
  * @package yimaWidgetator\Widget
  */
-interface MvcWidgetInterface extends ViewAwareWidgetInterface
+interface WidgetMvcInterface extends ViewRendererPlugInterface
 {
     /**
      * Set view script to render by view renderer

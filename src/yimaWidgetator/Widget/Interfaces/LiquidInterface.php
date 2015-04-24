@@ -7,6 +7,7 @@ namespace yimaWidgetator\Widget\Interfaces;
  *   of other widgets interfaces
  *
  * @package yimaWidgetator\Widget\Interfaces
+ * @deprecated
  */
 interface LiquidInterface
 {
