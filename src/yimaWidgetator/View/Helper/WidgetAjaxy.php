@@ -7,9 +7,8 @@ use Zend\View\Helper\HelperInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
 /**
- * Ajax load widgets helper
+ * Ajax load for widgets
  *
- * @package yimaWidgetator\View\Helper
  */
 class WidgetAjaxy implements HelperInterface
 {
@@ -23,7 +22,7 @@ class WidgetAjaxy implements HelperInterface
     protected $view = null;
 
     /**
-     * Detemine base script attached ?!!
+     * Determine base script attached ?!!
      *
      * @var bool
      */
@@ -37,20 +36,20 @@ class WidgetAjaxy implements HelperInterface
      *
      * @return $this
      */
-    public function __invoke($cssSelector = null, $options = array())
+    public function __invoke($cssSelector = null, $options = [])
     {
-        if ($cssSelector == null) {
+        if ($cssSelector == null)
             // return this
             return $this;
-        }
 
-        $defaults = array (
+        $defaults = [
             'method'   => 'render',
             'params'   => array(),
             // 'callback' => 'function(element, response){}',
 
             'request_token' => $this->generateToken(),
-        );
+        ];
+
         $options = array_merge($defaults, $options);
         if (isset($options['callback'])){
             $callback = $options['callback'];
@@ -58,18 +57,22 @@ class WidgetAjaxy implements HelperInterface
         }
 
         // attach needed scripts
-        if (!$this->isScriptsAttached()) {
+        if (!$this->isScriptsAttached())
             $this->attachScripts();
-        }
 
         // append widget loader script {
-        $requestParams   = Json\Json::encode($options);
-        $jsfunc = ($callback) ? "widgetator($requestParams, $callback);" : "widgetator($requestParams);";
-        $this->getView()->jQuery()
+        $requestParams = Json\Json::encode($options);
+        $jsFunc = ($callback)
+            ? "widgetator($requestParams, $callback);"
+            : "widgetator($requestParams);";
+
+        $this->getView()->inlineScript()
             ->appendScript("
-                $(document).ready(function(){
-                    $('$cssSelector').$jsfunc;
-                });
+                (function($){
+                    $(document).ready(function(){
+                        $('$cssSelector').$jsFunc;
+                    });
+                })(jQuery);
             ");
         // ... }
 
@@ -104,26 +107,26 @@ class WidgetAjaxy implements HelperInterface
      */
     public function attachScripts()
     {
-        if ($this->isScriptsAttached()) {
-
+        if ($this->isScriptsAttached())
             return $this;
-        }
 
         $view = $this->getView();
-        $view->jQuery()
-            ->enable()
+        $view->inlineScript()
             // we can change target of js files with static_uri_helper config key
             ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.Json'))
             ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.Ajaxq'))
+            ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.WidgetAjaxy'))
 
+            /*
             ->appendScript(
                 str_replace(
                     '{{url}}',
                     $view->url('yimaWidgetator_restLoadWidget'),
                     file_get_contents(__DIR__.DS.'WidgetAjaxy.js')
                 )
-            );
-
+            )
+            */
+        ;
 
         $this->isScriptAttached = true;
 

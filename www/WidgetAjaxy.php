@@ -1,4 +1,13 @@
-//<!--
+<?php
+// Set the content type to Javascript
+header("Content-type: text/javascript");
+
+// Disallow caching
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+?>
+
+// <script type="text/javascript">
 (function($){
     /**
      * Load Widget By Making An Ajax Call
@@ -52,7 +61,7 @@
     }
 
     $.fn.widgetator.settings = {
-        provider_url: '{{url}}',
+        provider_url: '<?php echo $this->sm->get('ViewHelperManager')->get('url')->__invoke('yimaWidgetator_restLoadWidget'); ?>',
         loading_class: 'widgetator-loading'
     };
 
@@ -80,6 +89,5 @@
             }
         }
     }
-
 })(jQuery);
-//-->
+// </script>

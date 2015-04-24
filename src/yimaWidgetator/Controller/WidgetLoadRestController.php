@@ -4,6 +4,7 @@ namespace yimaWidgetator\Controller;
 use yimaWidgetator\Service;
 use yimaWidgetator\View\Helper\WidgetAjaxy;
 use yimaWidgetator\Widget\Interfaces\ViewRendererPlugedInterface;
+use yimaWidgetator\Widget\Interfaces\ViewRendererPlugInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Session\Container as SessionContainer;
@@ -62,8 +63,7 @@ class WidgetLoadRestController extends AbstractRestfulController
             $message   = get_class($e);
             $result    = $e->getMessage();
 
-            $this->response
-                ->setStatusCode(417);
+            $this->response->setStatusCode(417);
         }
 
         // set response
@@ -101,7 +101,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         $widget  = $this->widget($widget, $params);
 
         // WIDGET PREPROCESS ... {
-        if ($widget instanceof ViewRendererPlugedInterface) {
+        if ($widget instanceof ViewRendererPlugInterface) {
             // reset container to have only widget script
             $renderer = $widget->getView();
 
@@ -131,7 +131,7 @@ class WidgetLoadRestController extends AbstractRestfulController
         }
 
         // WIDGET POSTPROCESS ... {
-        if ($widget instanceof ViewRendererPlugedInterface) {
+        if ($widget instanceof ViewRendererPlugInterface) {
             // get scripts back
             foreach($headScript as $sc) {
                 $result['scripts'][] = (array) $sc;

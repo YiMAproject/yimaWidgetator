@@ -34,17 +34,7 @@ class Module implements
     public function init(ModuleManagerInterface $moduleModuleManager)
     {
         /** @var $moduleModuleManager \Zend\ModuleManager\ModuleManager */
-        $moduleModuleManager->loadModule('yimaJquery');
-
-        //$moduleManager->loadModule('yimaStaticUriHelper');
-        if (! $moduleModuleManager->getModule('yimaStaticUriHelper')) {
-            // yimaStaticUriHelper needed and not loaded.
-            // loadModule in default zf2 can't load more than one module
-            throw new \Exception(
-                'Module "yimaStaticUriHelper" not loaded, by zf2 module manager we can`t load this module automatically.'
-                .'please enable this module and put before "yimaWidgetator".'
-            );
-        }
+        $moduleModuleManager->loadModule('yimaStaticUriHelper');
     }
 
     /**

@@ -1,16 +1,16 @@
 <?php
-return array(
+return [
     /**
      * Register Widgets in WidgetManager
      *
      * each widget must instance of WidgetInterface
      */
-    'yima_widgetator' => array(
+    'yima_widgetator' => [
          // This is configurable service manager config
-		'invokables' => array(
+		'invokables' => [
 			# 'widgetName' => 'Widget\Class',
-		),
-        'initializers' => array (
+		],
+        'initializers' => [
             // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface
             function ($instance, $sl) {
                 if ($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
@@ -20,46 +20,52 @@ return array(
                     );
                 }
             }
-        ),
-	),
+        ],
+	],
 
     /**
      * Libraries that used in Ajax Loading of widgets.
      * @see \yimaJquery\View\Helper\WidgetAjaxy
      */
-    'static_uri_helper' => array(
-        'Yima.Widgetator.JS.Jquery.Ajaxq' => '$basepath/yima-widgetator/js/jquery.ajaxq.min.js',
-        'Yima.Widgetator.JS.Jquery.Json'  => '$basepath/yima-widgetator/js/jquery.json.min.js',
-    ),
+    'statics.uri' => [
+        'paths' => [
+            'Yima.Widgetator.JS.Jquery.Ajaxq'        => '$basepath/yima-widgetator/js/jquery.ajaxq.min.js',
+            'Yima.Widgetator.JS.Jquery.Json'         => '$basepath/yima-widgetator/js/jquery.json.min.js',
+            'Yima.Widgetator.JS.Jquery.WidgetAjaxy'  => '$basepath/yima-widgetator/js/jquery.widget_ajaxy.js',
+        ],
+    ],
 
-    'asset_manager' => array(
-        'resolver_configs' => array(
-            'paths' => array(
+    'asset_manager' => [
+        'resolver_configs' => [
+            'paths' => [
                 __DIR__.'/../www',
+            ],
+            'map' => array(
+                'yima-widgetator/js/jquery.widget_ajaxy.js' => __DIR__ . '/../www/WidgetAjaxy.php',
             ),
-        ),
-    ),
+        ],
+    ],
 
     /**
      * Rest Controller to loading widgets
      */
-    'controllers' => array(
-		'invokables' => array(
+    'controllers' => [
+		'invokables' => [
             'yimaWidgetator\Controller\Rest' => 'yimaWidgetator\Controller\WidgetLoadRestController'
-		),
-	),
+		],
+	],
 
-    'router' => array(
-        'routes' => array(
-            'yimaWidgetator_restLoadWidget' => array(
+    'router' => [
+        'routes' => [
+            'yimaWidgetator_restLoadWidget' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/yimaWidgetator/loadWidget',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'yimaWidgetator\Controller\Rest',
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
