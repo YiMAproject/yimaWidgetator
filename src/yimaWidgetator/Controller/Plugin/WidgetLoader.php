@@ -5,13 +5,9 @@ use yimaWidgetator\Service\AbstractWidgetHelper;
 use Zend\Mvc\Controller\Plugin\PluginInterface;
 use Zend\Stdlib\DispatchableInterface as Dispatchable;
 
-/**
- * Class WidgetLoader
- *
- * @package yimaWidgetator\Controller\Plugin
- */
 class WidgetLoader extends AbstractWidgetHelper
-    implements PluginInterface
+    implements
+    PluginInterface
 {
     /**
      * @var null|Dispatchable

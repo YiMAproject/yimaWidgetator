@@ -59,10 +59,7 @@ class WidgetManager extends AbstractPluginManager
     {
     	$return = parent::get($name, $options, $usePeeringServiceManagers);
 
-        if (method_exists($return, 'setFromArray')) {
-            // call setter methods from array option
-            call_user_func_array([$return, 'setFromArray'], [$options]);
-        }
+        // TODO Ensure that options was implemented for wdgets
 
         return $return;
     }
@@ -100,24 +97,21 @@ class WidgetManager extends AbstractPluginManager
     public function injectWidgetDependencies(WidgetInterface $widget, ServiceLocatorInterface $serviceLocator)
     {
         /** @var $serviceLocator \yimaWidgetator\Service\WidgetManager */
-
         $sm = $serviceLocator->getServiceLocator();
-        if (!$sm) {
+        if (!$sm)
             throw new \Exception('Service Manager can`t found.');
-        }
 
         /**
          * MVC Widget
          */
         if ($widget instanceof ViewRendererPlugInterface) {
-            if (! $sm->has('ViewRenderer')) {
+            if (! $sm->has('ViewRenderer'))
                 throw new \Exception('ViewRenderer service not found on Service Manager.');
-            }
 
             $widget->setView($sm->get('ViewRenderer'));
         }
 
-        if ($widget instanceof InitializeFeatureInterface) {
+        if ($widget instanceof iInitableWidgetFeature) {
             // widget initialize himself after all
             $widget->init();
         }

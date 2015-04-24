@@ -6,14 +6,13 @@ namespace yimaWidgetator\Service;
  * Classes implement this feature have called init() method after
  * service created by pluginManager(WidgetManager)
  *
- * @package yimaWidgetator\Service
  */
-interface InitializeFeatureInterface
+interface iInitableWidgetFeature
 {
     /**
      * Initialize class object
      *
      * @return string
      */
-    public function init();
+    function init();
 }
