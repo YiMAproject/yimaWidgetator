@@ -3,7 +3,7 @@ namespace yimaWidgetator\Widget;
 
 use Poirot\Core\Interfaces\iPoirotOptions;
 use Poirot\Core\OpenOptions;
-use yimaWidgetator\Service\iInitableWidgetFeature;
+use yimaWidgetator\Widget\Interfaces\Feature\iInitableWidgetFeature;
 use Zend\Filter;
 use Poirot\Core\Interfaces\OptionsProviderInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;

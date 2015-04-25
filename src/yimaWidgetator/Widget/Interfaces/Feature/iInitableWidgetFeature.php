@@ -1,5 +1,5 @@
 <?php
-namespace yimaWidgetator\Service;
+namespace yimaWidgetator\Widget\Interfaces\Feature;
 
 /**
  * Interface InitializeFeatureInterface
