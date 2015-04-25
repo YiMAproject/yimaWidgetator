@@ -1,7 +1,7 @@
 <?php
 namespace yimaWidgetator\View\Helper;
 
-use yimaWidgetator\Service\AbstractWidgetHelper;
+use yimaWidgetator\AbstractWidgetHelper;
 use Zend\View\Helper\HelperInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 

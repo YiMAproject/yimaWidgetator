@@ -1,6 +1,7 @@
 <?php
-namespace yimaWidgetator\Service;
+namespace yimaWidgetator;
 
+use yimaWidgetator\Service\WidgetManager;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

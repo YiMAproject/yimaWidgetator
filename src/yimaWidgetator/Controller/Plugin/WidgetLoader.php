@@ -1,7 +1,7 @@
 <?php
 namespace yimaWidgetator\Controller\Plugin;
 
-use yimaWidgetator\Service\AbstractWidgetHelper;
+use yimaWidgetator\AbstractWidgetHelper;
 use Zend\Mvc\Controller\Plugin\PluginInterface;
 use Zend\Stdlib\DispatchableInterface as Dispatchable;
 
