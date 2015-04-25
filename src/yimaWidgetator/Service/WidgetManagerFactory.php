@@ -17,11 +17,12 @@ class WidgetManagerFactory implements ServiceManager\FactoryInterface
         $config = $serviceLocator->get('config');
 
         $config = (isset($config['yima_widgetator'])) ? $config['yima_widgetator'] : [];
-        $config = new ServiceManager\Config($config);
+        (isset($config['services'])) ? $config = $config['services'] : [];
 
         // ServiceLocator Will Injected into WidgetManager
         // because is instanceof serviceLocatorAwareInterface
-        $widgetManager = new WidgetManager($config);
+        $smConfig      = new ServiceManager\Config($config);
+        $widgetManager = new WidgetManager($smConfig);
 
         return $widgetManager;
     }

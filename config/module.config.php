@@ -6,20 +6,22 @@ return [
      * each widget must instance of WidgetInterface
      */
     'yima_widgetator' => [
-         // This is configurable service manager config
-		'invokables' => [
-			# 'widgetName' => 'Widget\Class',
-		],
-        'initializers' => [
-            // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface
-            function ($instance, $sl) {
-                if ($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
-                    $sm = $sl->getServiceLocator();
-                    $instance->setDbAdapter(
-                        $sm->get('Zend\Db\Adapter\Adapter')
-                    );
+        // This is configurable service manager config
+        'services' => [
+            'invokables' => [
+                # 'widgetName' => 'Widget\Class',
+            ],
+            'initializers' => [
+                // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface
+                function ($instance, $sl) {
+                    if ($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
+                        $sm = $sl->getServiceLocator();
+                        $instance->setDbAdapter(
+                            $sm->get('Zend\Db\Adapter\Adapter')
+                        );
+                    }
                 }
-            }
+            ],
         ],
 	],
 
