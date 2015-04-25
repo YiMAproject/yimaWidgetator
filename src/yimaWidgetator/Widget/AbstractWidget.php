@@ -193,6 +193,8 @@ abstract class AbstractWidget
 	
 	/**
 	 * Determine the name of the widget
+     *
+     * TODO maybe unpredicted behave happen for none defined directory structured widgets
 	 *
 	 * @return string
 	 */
