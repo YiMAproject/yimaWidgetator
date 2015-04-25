@@ -1,13 +1,17 @@
 <?php
 namespace yimaWidgetator;
 
+use yimaWidgetator\Listener\WidgetizeAggregateListener;
+use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ControllerPluginProviderInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\ViewHelperProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
+use Zend\Mvc\MvcEvent;
 
 /**
  * Class Module
@@ -16,6 +20,7 @@ use Zend\ModuleManager\ModuleManagerInterface;
  */
 class Module implements
     InitProviderInterface,
+    BootstrapListenerInterface,
     ServiceProviderInterface,
     ControllerPluginProviderInterface,
     ViewHelperProviderInterface,
@@ -38,6 +43,24 @@ class Module implements
     }
 
     /**
+     * Listen to the bootstrap event
+     *
+     * @param EventInterface|MvcEvent $e
+     * @return array
+     */
+    public function onBootstrap(EventInterface $e)
+    {
+        // --- Attach default Listeners  ---------------------------------==================
+        $sm           = $e->getApplication()->getServiceManager();
+        $listenerAggr = new WidgetizeAggregateListener();
+        $listenerAggr->setServiceManager($sm);
+
+        $e->getApplication()
+            ->getEventManager()->attach($listenerAggr)
+        ;
+    }
+
+    /**
      * Expected to return \Zend\ServiceManager\Config object or array to
      * seed such an object.
      *
@@ -47,7 +70,8 @@ class Module implements
 	{
         return array(
             'factories' => array(
-                'yimaWidgetator.WidgetManager' => 'yimaWidgetator\Service\WidgetManagerFactory',
+                'yimaWidgetator.WidgetManager'        => 'yimaWidgetator\Service\WidgetManagerFactory',
+                'yimaWidgetator.Widgetizer.Container' => 'yimaWidgetator\Service\WidgetizerContainerFactory',
             ),
         );
 	}
