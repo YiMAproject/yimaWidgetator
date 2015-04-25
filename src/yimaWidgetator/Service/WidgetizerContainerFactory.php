@@ -14,6 +14,15 @@ class WidgetizerContainerFactory implements ServiceManager\FactoryInterface
      */
     public function createService(ServiceManager\ServiceLocatorInterface $serviceLocator)
     {
-        // TODO Implement Feature
+        $config = $serviceLocator->get('config');
+
+        $config = (isset($config['yima_widgetator'])) ? $config['yima_widgetator'] : [];
+        $config = new ServiceManager\Config($config);
+
+        // ServiceLocator Will Injected into WidgetManager
+        // because is instanceof serviceLocatorAwareInterface
+        $widgetManager = new WidgetManager($config);
+
+        return $widgetManager;
     }
 }

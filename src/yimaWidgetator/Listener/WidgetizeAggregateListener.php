@@ -41,6 +41,7 @@ class WidgetizeAggregateListener implements
     {
         $this->listeners[] = $events->attach(
             MvcEvent::EVENT_RENDER
+            // TODO this event must change to something most closest but before render
             , array($this, 'onRenderRenderWidgets')
             , -9000
         );
