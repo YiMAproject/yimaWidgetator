@@ -3,6 +3,7 @@ namespace yimaWidgetator\Widget;
 
 use Poirot\Core\Interfaces\iPoirotOptions;
 use Poirot\Core\OpenOptions;
+use yimaWidgetator\Service\iInitableWidgetFeature;
 use Zend\Filter;
 use Poirot\Core\Interfaces\OptionsProviderInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
@@ -13,6 +14,7 @@ abstract class AbstractWidget
     implements
     WidgetInterface,
     OptionsProviderInterface,
+    iInitableWidgetFeature,
     ServiceLocatorAwareInterface // to get serviceManager and other registered widgets from within
 {
     /**
@@ -36,6 +38,21 @@ abstract class AbstractWidget
      * @var ServiceLocatorInterface|\yimaWidgetator\Service\WidgetManager
      */
     protected $serviceLocator;
+
+    /**
+     * Initialize object on widget manager -
+     * instance creation
+     *
+     * @return string
+     */
+    function init()
+    {
+        // implement this if you want some feature after
+        // object creation with widget manager
+        // usually happen when you need all dependencies and initializers
+        // done on object by widget manager.
+        // exp. ServiceManager Injected Into Object ...
+    }
 
     /**
      * Render widget as string output

@@ -10,7 +10,8 @@ namespace yimaWidgetator\Service;
 interface iInitableWidgetFeature
 {
     /**
-     * Initialize class object
+     * Initialize object on widget manager -
+     * instance creation
      *
      * @return string
      */
