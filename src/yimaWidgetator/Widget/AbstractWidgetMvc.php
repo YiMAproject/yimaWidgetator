@@ -127,12 +127,13 @@ class AbstractWidgetMvc extends AbstractWidget
      */
     final function deriveLayoutPathPrefix()
     {
-        $DS   = (defined('DS')) ? constant('DS') : DIRECTORY_SEPARATOR;
-
         $moduleNamespace = $this->deriveModuleNamespace();
-        $path  = ($moduleNamespace) ? $moduleNamespace .$DS : '';
+        $path  = ($moduleNamespace) ? $moduleNamespace .'/' : '';
         $path .= $this->deriveWidgetName();
 
-        return $this->inflectName($path);
+        // in some cases widget name contains \ from class namespace
+        $path  = str_replace('\\', '/', $this->inflectName($path));
+
+        return $path;
     }
 }
