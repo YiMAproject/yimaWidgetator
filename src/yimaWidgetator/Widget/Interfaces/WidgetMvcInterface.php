@@ -3,11 +3,6 @@ namespace yimaWidgetator\Widget\Interfaces;
 
 use Zend\View\Model\ModelInterface;
 
-/**
- * Interface MvcWidgetInterface
- *
- * @package yimaWidgetator\Widget
- */
 interface WidgetMvcInterface extends ViewRendererPlugInterface
 {
     /**
