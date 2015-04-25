@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Service;
 
+use yimaWidgetator\Widget\Interfaces\Feature\iInitableWidgetFeature;
 use yimaWidgetator\Widget\Interfaces\ViewRendererPlugInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\ServiceManager\AbstractPluginManager;
