@@ -3,7 +3,6 @@ namespace yimaWidgetator\Controller;
 
 use yimaWidgetator\Service;
 use yimaWidgetator\View\Helper\WidgetAjaxy;
-use yimaWidgetator\Widget\Interfaces\ViewRendererPlugedInterface;
 use yimaWidgetator\Widget\Interfaces\ViewRendererPlugInterface;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
