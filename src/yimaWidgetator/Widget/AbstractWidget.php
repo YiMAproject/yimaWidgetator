@@ -48,11 +48,20 @@ abstract class AbstractWidget
      * To String Magic Method
      * : flush widgets content over echo(output func.)
      *
+     * ! by php: __toString must no thrown an exception
+     *
      * @return string
      */
     function __toString()
     {
-        return $this->render();
+        try {
+            $return = $this->render();
+        }
+        catch (\Exception $e) {
+            $return = $e->getMessage();
+        }
+
+        return $return;
     }
 
     /**
@@ -199,7 +208,7 @@ abstract class AbstractWidget
 		if (strstr($widget, '\\')) {
 			$widget = substr($widget,strpos($widget, '\\')+1);
 		}
-		
+
 		return $widget;
 	}
 
