@@ -3,7 +3,7 @@ namespace yimaWidgetator\Service;
 
 use Zend\ServiceManager;
 
-class WidgetizerContainerFactory implements ServiceManager\FactoryInterface
+class RegionBoxContainerFactory implements ServiceManager\FactoryInterface
 {
     /**
      * Create service
@@ -17,12 +17,11 @@ class WidgetizerContainerFactory implements ServiceManager\FactoryInterface
         $config = $serviceLocator->get('config');
 
         $config = (isset($config['yima_widgetator'])) ? $config['yima_widgetator'] : [];
-        $config = new ServiceManager\Config($config);
+        $config = (isset($config['widgets'])) ? $config['widgets'] : [];
 
-        // ServiceLocator Will Injected into WidgetManager
-        // because is instanceof serviceLocatorAwareInterface
-        $widgetManager = new WidgetManager($config);
+        $widgetContainer = new RegionBoxContainer;
+        $widgetContainer->addWidgets($config);
 
-        return $widgetManager;
+        return $widgetContainer;
     }
 }

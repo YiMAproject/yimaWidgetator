@@ -23,6 +23,19 @@ return [
                 }
             ],
         ],
+        'widgets' => [
+            /** @see RegionBoxContainer */
+            'region_box' => [
+                # // $priority default is start with 0
+                # $priority => 'WidgetName',
+                # $priority => [
+                #    'widget' => 'WidgetName'
+                #    'params' => [
+                #       'with_construct_param' => 'param_value'
+                #     ]
+                # ],
+            ],
+        ],
 	],
 
     /**

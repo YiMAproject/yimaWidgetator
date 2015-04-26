@@ -68,12 +68,12 @@ class Module implements
      */
 	public function getServiceConfig()
 	{
-        return array(
-            'factories' => array(
+        return [
+            'factories' => [
                 'yimaWidgetator.WidgetManager'        => 'yimaWidgetator\Service\WidgetManagerFactory',
-                'yimaWidgetator.Widgetizer.Container' => 'yimaWidgetator\Service\WidgetizerContainerFactory',
-            ),
-        );
+                'yimaWidgetator.Widgetizer.Container' => 'yimaWidgetator\Service\RegionBoxContainerFactory',
+            ],
+        ];
 	}
 
     /**
@@ -83,14 +83,14 @@ class Module implements
      */
     public function getControllerPluginConfig()
 	{
-		return array(
-			'invokables' => array (
+		return [
+			'invokables' => [
 				'widgetLoader' => 'yimaWidgetator\Controller\Plugin\WidgetLoader',
-			),
-			'aliases' => array (
+			],
+			'aliases' => [
 				'widget' => 'widgetLoader', 
-			),
-		);
+			],
+		];
 	}
 
     /**
@@ -100,15 +100,15 @@ class Module implements
      */
     public function getViewHelperConfig()
 	{
-		return array(
-			'invokables' => array (
+		return [
+			'invokables' => [
 				'widgetLoader' => 'yimaWidgetator\View\Helper\WidgetLoader',
                 'widgetAjaxy'  => 'yimaWidgetator\View\Helper\WidgetAjaxy',
-			),
-			'aliases' => array (
+			],
+			'aliases' => [
 				'widget' => 'widgetLoader',
-			),
-		);
+			],
+		];
 	}
 
     /**
@@ -128,12 +128,12 @@ class Module implements
      */
     public function getAutoloaderConfig()
 	{
-		return array(
-			'Zend\Loader\StandardAutoloader' => array(
-				'namespaces' => array(
+		return [
+			'Zend\Loader\StandardAutoloader' => [
+				'namespaces' => [
 					__NAMESPACE__ => __DIR__,
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 }

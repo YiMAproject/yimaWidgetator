@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator\Listener;
 
+use yimaWidgetator\Service\RegionBoxContainer;
 use yimaWidgetator\Service\WidgetManager;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -10,7 +11,6 @@ use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\View\Model\ModelInterface;
-use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
 
 class WidgetizeAggregateListener implements
@@ -65,59 +65,56 @@ class WidgetizeAggregateListener implements
             return false;
         }*/
 
-        $widgetContainer = $this->sm->get('yimaWidgetator.Widgetizer.Container');
-        $result = $widgetContainer->find();
-        foreach ($result as $wdg) {
+        /** @var RegionBoxContainer $rBoxContainer */
+        $rBoxContainer = $this->sm->get('yimaWidgetator.Widgetizer.Container');
+        foreach ($rBoxContainer->getWidgets() as $region => $wdgs) {
             // Render Widget
-            $this->__renderWidget($wdg, $viewModel);
+            $this->__renderWidgets($region, $wdgs, $viewModel);
         }
     }
 
     /**
      * Render Widget From Container Result
      *
-     * @param mixed          $wdg       Container Widget Entity
-     * @param ModelInterface $viewModel View Model
+     * @param array          $widgets    Container Widget Entity
+     * @param ModelInterface $viewModel  View Model
      *
      * @return bool
      */
-    protected function __renderWidget($wdg, ModelInterface $viewModel)
+    protected function __renderWidgets($region, array $widgets, ModelInterface $viewModel)
     {
-        /** @var $widgetManager WidgetManager */
-        $widgetManager = $this->sm->get('yimaWidgetator.WidgetManager');
+        foreach($widgets as $widget) {
+            $widget = $this->___attainWidgetInstance($widget);
 
-        /** @var $widgetModel WidgetModelInterface */
-        $widgetModel = $this->sm->get('Widgetizer.Model.Widget');
-        /** @var $w Widget */
-        $w = $widgetModel->getWidgetByUid( $r->get(CWE::WIDGET_UID) );
-        if (!$w || !$widgetManager->has($w->get(Widget::WIDGET))) {
-            // we don't have a widget with this name registered.
-            // ...
-            return false;
-        }
-
-        // get widget from widgetManager by Widget Name Field
-        /** @var $widget WidgetInterface */
-        $widget = $widgetManager->get($w->get(Widget::WIDGET));
-        if (method_exists($widget, 'setFromArray')) {
-            // load prop. entities into widget
-            $widget->setFromArray($w->getArrayCopy());
-        }
-
-        $template_area = $r->get(CWE::TEMPLATE_AREA);
-        if (ShareRegistery::isManagementAllowed()) {
-            // Decorate widgets with ui management partial template
-            $view = $this->__getViewRenderer();
-            $widgetViewModel = new ViewModel(array('widget' => $widget));
-            $widgetViewModel->setTemplate('partial/builderfront/surround-widgets-decorator');
-            $content = $view->render($widgetViewModel);
-        } else {
             // Render Widget
             $content = $widget->render();
-        }
 
-        $viewModel->{$template_area} .= $content;
+            // TODO maybe we want to add filter or event on rendering widget contents
+            $viewModel->{$region} .= $content;
+        }
     }
+
+        /**
+         * @param mixed $widget
+         *
+         * @return WidgetInterface
+         */
+        protected function ___attainWidgetInstance($widget)
+        {
+            /** @var $widgetManager WidgetManager */
+            $widgetManager = $this->sm->get('yimaWidgetator.WidgetManager');
+    
+            $options = [];
+            if (is_array($widget)) {
+                $wArg    = $widget;
+                $widget  = $wArg['widget'];
+                $options = $wArg['params'];
+            }
+
+            $instance = $widgetManager->get($widget, $options);
+
+            return $instance;
+        }
 
     /**
      * Get View Renderer
