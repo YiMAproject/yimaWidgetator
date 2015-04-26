@@ -1,7 +1,7 @@
 <?php
 namespace yimaWidgetator;
 
-use yimaWidgetator\Listener\WidgetizeAggregateListener;
+use yimaWidgetator\Listener\WidgetizeViewStrategy;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -21,7 +21,6 @@ use Zend\View\View;
  */
 class Module implements
     InitProviderInterface,
-    BootstrapListenerInterface,
     ServiceProviderInterface,
     ControllerPluginProviderInterface,
     ViewHelperProviderInterface,
@@ -41,26 +40,6 @@ class Module implements
     {
         /** @var $moduleModuleManager \Zend\ModuleManager\ModuleManager */
         $moduleModuleManager->loadModule('yimaStaticUriHelper');
-    }
-
-    /**
-     * Listen to the bootstrap event
-     *
-     * @param EventInterface|MvcEvent $e
-     * @return array
-     */
-    public function onBootstrap(EventInterface $e)
-    {
-        // --- Attach default Listeners  ---------------------------------==================
-        $sm           = $e->getApplication()->getServiceManager();
-
-        /** @var View $view */
-        $view = $sm->get('ViewManager')->getView();
-        $viewEvents = $view->getEventManager();
-
-        $listenerAggr = new WidgetizeAggregateListener();
-        $listenerAggr->setServiceManager($sm);
-        $viewEvents->attach($listenerAggr);
     }
 
     /**

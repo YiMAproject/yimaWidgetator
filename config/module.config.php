@@ -39,6 +39,18 @@ return [
         ],
 	],
 
+    'view_manager' => [
+        'strategies' => [
+            # render widgets into layout viewModel
+            'Yima.Widgetator.ViewStrategy',
+        ],
+    ],
+    'service_manager' => [
+        'invokables' => [
+            'Yima.Widgetator.ViewStrategy' => 'yimaWidgetator\Listener\WidgetizeViewStrategy'
+        ],
+    ],
+
     /**
      * Libraries that used in Ajax Loading of widgets.
      * @see \yimaJquery\View\Helper\WidgetAjaxy

@@ -29,6 +29,8 @@ class Widget extends AbstractWidgetMvc
         $layout = $this->options()->getModel();
         if (!$layout)
             throw new \Exception('Layout not set as "model" options key.');
+
+        return $layout;
     }
 
     /**
