@@ -10,7 +10,7 @@ return [
         'services' => [
             'invokables' => [
                 # Default Widgets:
-                'partial' => 'yimaWidgetator\Widget\Patial\Widget',
+                'partial' => 'yimaWidgetator\Widget\Partial\Widget',
             ],
             'initializers' => [
                 // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface
