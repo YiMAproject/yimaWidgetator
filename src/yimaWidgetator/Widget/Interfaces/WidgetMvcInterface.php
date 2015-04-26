@@ -12,12 +12,12 @@ interface WidgetMvcInterface extends ViewRendererPlugInterface
      *
      * @return mixed
      */
-    public function setLayout($nameOrModel);
+    function setLayout($nameOrModel);
 
     /**
      * Get view script layout
      *
      * @return string|ModelInterface
      */
-    public function getLayout();
+    function getLayout();
 }

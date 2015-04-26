@@ -51,7 +51,7 @@ class AbstractWidgetMvc extends AbstractWidget
      *
      * @return mixed
      */
-    final function setLayout($nameOrModel)
+    function setLayout($nameOrModel)
     {
         $this->layout = $nameOrModel;
     }
@@ -61,7 +61,7 @@ class AbstractWidgetMvc extends AbstractWidget
      *
      * @return string|ModelInterface
      */
-    final function getLayout()
+    function getLayout()
     {
         if ($this->layout === null) {
             $DS = (defined('DS')) ? constant('DS') : DIRECTORY_SEPARATOR;
@@ -71,7 +71,7 @@ class AbstractWidgetMvc extends AbstractWidget
                 .$DS
                 .$this->deriveLayoutPathPrefix() # namespace_widget\widget_name\
                 .$DS
-                .$this->getLayoutName();
+                .$this->getDefaultLayoutName();
 
             $this->layout = $pathname;
         }
@@ -87,7 +87,7 @@ class AbstractWidgetMvc extends AbstractWidget
      *
      * @return string
      */
-    function getLayoutName()
+    protected function getDefaultLayoutName()
     {
         return self::$LAYOUT_DEF_NAME;
     }

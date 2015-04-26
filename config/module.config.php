@@ -9,7 +9,8 @@ return [
         // This is configurable service manager config
         'services' => [
             'invokables' => [
-                # 'widgetName' => 'Widget\Class',
+                # Default Widgets:
+                'partial' => 'yimaWidgetator\Widget\Patial\Widget',
             ],
             'initializers' => [
                 // DB: Using Global db Adapter on each services Implemented AdapterAwareInterface

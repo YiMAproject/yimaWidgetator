@@ -40,6 +40,19 @@ abstract class AbstractWidget
     protected $serviceLocator;
 
     /**
+     * Construct
+     *
+     * @param null|array $options Widget Options
+     */
+    function __construct(array $options = null)
+    {
+        if ($options !== null)
+            $this->options()->from($options);
+    }
+
+    // Implement iInitableWidgetFeature:
+
+    /**
      * Initialize object on widget manager -
      * instance creation
      *
@@ -53,6 +66,8 @@ abstract class AbstractWidget
         // done on object by widget manager.
         // exp. ServiceManager Injected Into Object ...
     }
+
+    // Implement Feature:
 
     /**
      * Render widget as string output
