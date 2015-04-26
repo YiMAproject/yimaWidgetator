@@ -1,6 +1,7 @@
 <?php
 namespace yimaWidgetator;
 
+use yimaWidgetator\Service\RegionBoxContainer;
 use yimaWidgetator\Service\WidgetManager;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -21,6 +22,12 @@ class AbstractWidgetHelper
     protected $serviceLocator;
 
     /**
+     * Container for layout region boxes widgets
+     * @var RegionBoxContainer
+     */
+    protected $rBoxContainer;
+
+    /**
      * Invoke as a functor
      *
      * - if no arguments are given, grabs WidgetLoader
@@ -35,9 +42,32 @@ class AbstractWidgetHelper
     public function __invoke($widget = null, $options = [])
     {
         if (null === $widget)
-            return $this->getWidgetManager();
+            return $this;
 
         return $this->getWidgetManager()->get($widget, $options);
+    }
+
+    /**
+     * Add Widget To Region Box Container
+     *
+     * @param $region
+     * @param $widget
+     * @param int $priority
+     *
+     * @return $this
+     */
+    function addWidget($region, $widget, $priority = 0)
+    {
+        if (!$this->rBoxContainer) {
+            $sm = $this->getServiceLocator()->getServiceLocator();
+            $rBoxContainer  = $sm->get('yimaWidgetator.Widgetizer.Container');
+
+            $this->rBoxContainer = $rBoxContainer;
+        }
+
+        $this->rBoxContainer->addWidget($region, $widget, $priority);
+
+        return $this;
     }
 
     /**
@@ -46,11 +76,11 @@ class AbstractWidgetHelper
      * @throws \Exception
      * @return WidgetManager
      */
-    protected function getWidgetManager()
+    function getWidgetManager()
     {
     	if (! $this->widgetManager) {
-            $serviceManager = $this->getServiceLocator()->getServiceLocator();
-            $widgetManager  = $serviceManager->get('yimaWidgetator.WidgetManager');
+            $sm = $this->getServiceLocator()->getServiceLocator();
+            $widgetManager  = $sm->get('yimaWidgetator.WidgetManager');
 
             if (!($widgetManager instanceof WidgetManager)
                 || !($widgetManager instanceof AbstractPluginManager)
@@ -65,7 +95,8 @@ class AbstractWidgetHelper
 
     	return $this->widgetManager;
     }
-    
+
+    // Implement ServiceLocator:
 
     /**
      * Set the main service locator so factories can have access to it to pull deps
