@@ -12,6 +12,7 @@ use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\ViewHelperProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\View\View;
 
 /**
  * Class Module
@@ -52,12 +53,14 @@ class Module implements
     {
         // --- Attach default Listeners  ---------------------------------==================
         $sm           = $e->getApplication()->getServiceManager();
+
+        /** @var View $view */
+        $view = $sm->get('ViewManager')->getView();
+        $viewEvents = $view->getEventManager();
+
         $listenerAggr = new WidgetizeAggregateListener();
         $listenerAggr->setServiceManager($sm);
-
-        $e->getApplication()
-            ->getEventManager()->attach($listenerAggr)
-        ;
+        $viewEvents->attach($listenerAggr);
     }
 
     /**

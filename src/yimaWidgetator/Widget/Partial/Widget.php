@@ -21,11 +21,14 @@ class Widget extends AbstractWidgetMvc
     /**
      * Get view script layout
      *
+     * @throws \Exception
      * @return string|ModelInterface
      */
     function getLayout()
     {
-        $this->options()->getModel();
+        $layout = $this->options()->getModel();
+        if (!$layout)
+            throw new \Exception('Layout not set as "model" options key.');
     }
 
     /**

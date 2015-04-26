@@ -12,6 +12,8 @@ use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\RendererInterface;
+use Zend\View\View;
+use Zend\View\ViewEvent;
 
 class WidgetizeAggregateListener implements
     ServiceManagerAwareInterface, // Service manager injected manually on bootstrap
@@ -40,30 +42,24 @@ class WidgetizeAggregateListener implements
     public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(
-            MvcEvent::EVENT_RENDER
-            // TODO this event must change to something most closest but before render
+            ViewEvent::EVENT_RENDERER_POST
             , array($this, 'onRenderRenderWidgets')
-            , -9000
         );
     }
 
     /**
      * Render Defined Widgets into Layout Sections(area)
      *
-     * @param MvcEvent $e MVC Event
+     * @param ViewEvent $e MVC Event
      *
      * @return void
      */
-    function onRenderRenderWidgets(MvcEvent $e)
+    function onRenderRenderWidgets(ViewEvent $e)
     {
-        $result = $e->getResult();
-        if ($result instanceof Response)
+        $viewModel = $e->getModel();
+        if (! $viewModel->terminate())
+            // Only base themes has a widgets rendered into
             return;
-
-        $viewModel = $e->getViewModel();
-        /*if (! $viewModel instanceof ThemeDefaultInterface) {
-            return false;
-        }*/
 
         /** @var RegionBoxContainer $rBoxContainer */
         $rBoxContainer = $this->sm->get('yimaWidgetator.Widgetizer.Container');
@@ -83,6 +79,8 @@ class WidgetizeAggregateListener implements
      */
     protected function __renderWidgets($region, array $widgets, ModelInterface $viewModel)
     {
+        k(__FUNCTION__);
+
         foreach($widgets as $widget) {
             $widget = $this->___attainWidgetInstance($widget);
 
