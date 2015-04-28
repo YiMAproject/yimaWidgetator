@@ -6,13 +6,10 @@ use yimaWidgetator\Service\WidgetManager;
 use yimaWidgetator\Widget\Interfaces\WidgetInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Http\PhpEnvironment\Response;
-use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\RendererInterface;
-use Zend\View\View;
 use Zend\View\ViewEvent;
 
 class WidgetizeAggregateListener implements
