@@ -151,7 +151,7 @@ abstract class AbstractWidget
     function getUid()
     {
         if (!$this->ID)
-            $this->ID = $this->generateID();
+            $this->ID = $this->_generateID();
 
         return $this->ID;
     }
@@ -164,7 +164,7 @@ abstract class AbstractWidget
      *
      * @return string
      */
-    final function generateID()
+    final function _generateID()
     {
         $uniqStr = function($length) {
             $char = "abcdefghijklmnopqrstuvwxyz0123456789";
