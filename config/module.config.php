@@ -69,7 +69,7 @@ return [
                 __DIR__.'/../www',
             ],
             'map' => array(
-                'yima-widgetator/js/jquery.widget_ajaxy.js' => __DIR__ . '/../www/WidgetAjaxy.php',
+                'yima-widgetator/js/jquery.widget_ajaxy.js' => __DIR__ . '/../www/widget_ajaxy.js.php',
             ),
         ],
     ],
