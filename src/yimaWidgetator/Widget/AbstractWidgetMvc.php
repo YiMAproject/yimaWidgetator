@@ -41,7 +41,10 @@ class AbstractWidgetMvc extends AbstractWidget
      */
     function render()
     {
-        return $this->getView()->render($this->getLayout(), $this->options()->toArray());
+        return $this->getView()->render(
+            $this->getLayout()
+            , $this->options()->toArray()
+        );
     }
 
     /**

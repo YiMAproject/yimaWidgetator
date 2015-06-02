@@ -70,7 +70,7 @@ class PhpRenderer extends BaseRenderer
         if (is_array($widget)) {
             $wArg    = $widget;
             $widget  = $wArg['widget'];
-            $options = $wArg['params'];
+            $options = (isset($wArg['params'])) ? $wArg['params'] : $options;
         }
 
         $instance = $widgetManager->get($widget, $options);
