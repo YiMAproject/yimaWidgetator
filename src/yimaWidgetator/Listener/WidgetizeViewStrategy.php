@@ -16,14 +16,14 @@ class WidgetizeViewStrategy implements
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * @var ServiceManager
      */
     protected $sm;
 
-    static protected $resolved;
+    static protected $resolved = false;
 
     /**
      * Attach one or more listeners
@@ -61,11 +61,11 @@ class WidgetizeViewStrategy implements
         $return = false;
 
         $options = $viewModel->getOptions();
-        if (!array_key_exists('has_parent', $options) && !self::$resolved) {
+        if (/*!array_key_exists('has_parent', $options) &&*/ !self::$resolved) {
             $return = new PhpRenderer;
             $return->setServiceLocator($this->sm);
 
-            self::$resolved = true;
+             //self::$resolved = true;
         }
 
         return $return;
