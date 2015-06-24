@@ -81,7 +81,7 @@ class AbstractWidgetMvc extends AbstractWidget
                 .$DS
                 .$this->deriveLayoutPathPrefix() # namespace_widget\widget_name\
                 .$DS
-                .$this->getDefaultLayoutName();
+                .$layoutName;
 
             $this->layout = $pathname;
         }
