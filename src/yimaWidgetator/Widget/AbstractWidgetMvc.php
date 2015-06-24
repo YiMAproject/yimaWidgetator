@@ -68,7 +68,12 @@ class AbstractWidgetMvc extends AbstractWidget
      */
     function getLayout()
     {
-        if ($this->layout === null) {
+        $layoutName = ($this->layout) ? $this->layout
+            : $this->getDefaultLayoutName();
+
+        if (strstr($layoutName, '/') === false) {
+            // we have just layout name
+            // the directory prefix assigned to it
             $DS = (defined('DS')) ? constant('DS') : DIRECTORY_SEPARATOR;
             // derive default layout pathname
             $pathname =
