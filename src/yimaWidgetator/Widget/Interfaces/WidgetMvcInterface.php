@@ -10,7 +10,7 @@ interface WidgetMvcInterface extends ViewRendererPlugInterface
      *
      * @param string|ModelInterface $nameOrModel The script/resource process, or a view model
      *
-     * @return mixed
+     * @return $this
      */
     function setLayout($nameOrModel);
 

@@ -57,6 +57,8 @@ class AbstractWidgetMvc extends AbstractWidget
     function setLayout($nameOrModel)
     {
         $this->layout = $nameOrModel;
+
+        return $this;
     }
 
     /**

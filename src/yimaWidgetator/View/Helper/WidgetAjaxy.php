@@ -113,9 +113,9 @@ class WidgetAjaxy implements HelperInterface
         $view = $this->getView();
         $view->inlineScript()
             // we can change target of js files with static_uri_helper config key
-            ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.Json'))
-            ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.Ajaxq'))
-            ->appendFile($view->staticUri('Yima.Widgetator.JS.Jquery.WidgetAjaxy'))
+            ->appendFile($view->staticsUri('Yima.Widgetator.JS.Jquery.Json'))
+            ->appendFile($view->staticsUri('Yima.Widgetator.JS.Jquery.Ajaxq'))
+            ->appendFile($view->staticsUri('Yima.Widgetator.JS.Jquery.WidgetAjaxy'))
 
             /*
             ->appendScript(

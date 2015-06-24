@@ -10,7 +10,7 @@ interface ViewRendererPlugInterface extends WidgetInterface
      *
      * @param  Renderer $view
      *
-     * @return mixed
+     * @return $this
      */
     public function setView(Renderer $view);
 
